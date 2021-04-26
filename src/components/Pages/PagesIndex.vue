@@ -5,7 +5,7 @@
       :scrollable="true"
       scrollHeight="400px"
       selectionMode="single"
-      @row-click="consolee($event.data)"
+      @row-click="selectPage($event.data)"
     >
       <Column field="Title" header="Название страницы" style="min-width: 200px"></Column>
       <Column field="URL" header="URL" style="min-width: 200px"></Column>
@@ -46,11 +46,11 @@ export default {
         price: 230,
       },
     ]);
-    function consolee(dataPage) {
+    function selectPage(dataPage) {
       router.push(`/pages/${dataPage.id}`);
       store.commit('pages/SET_EDITABLE_PAGE', dataPage)
     }
-    return { products, consolee };
+    return { products, selectPage };
   },
 };
 </script>
