@@ -61,6 +61,7 @@
   <pre>{{ dataPage }}</pre>
   <Dialog
     header="Выберете элемент"
+    :closable="false"
     v-model:visible="display"
     :style="{ width: '80vw' }"
     :maximizable="true"
@@ -80,10 +81,12 @@ import Dialog from "primevue/dialog";
 import PageEditorModalChooseElement from "../components/Pages/PageEditorModalChooseElement";
 import { reactive, ref } from "vue";
 import { useStore } from "vuex";
+import { useRouter } from 'vue-router'
 export default {
   components: { Button, PageEditorModalChooseElement, Dialog },
   props: ["id"],
   setup() {
+    const router = useRouter()
     const store = useStore();
     const dataPage = reactive(store.getters["pages/editablePage"]);
     const display = ref(false);
@@ -92,6 +95,7 @@ export default {
     }
     function close() {
       display.value = false;
+      router.push({ query: {} })
     }
     return {
       dataPage,

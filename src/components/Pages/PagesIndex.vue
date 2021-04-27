@@ -48,7 +48,7 @@ export default {
     ]);
     function selectPage(dataPage) {
       router.push(`/pages/${dataPage.id}`);
-      store.commit('pages/SET_EDITABLE_PAGE', dataPage)
+      store.commit("pages/SET_EDITABLE_PAGE", dataPage);
     }
     return { products, selectPage };
   },
