@@ -5,7 +5,9 @@
     </div>
     <div class="p-col p-d-flex p-pr-3 p-pl-0 p-pt-0 layout__body">
       <div class="p-shadow-10 p-col body__container">
-        <router-view />
+        <ScrollPanel style="width: 100%; height: 100%">
+          <router-view />
+        </ScrollPanel>
       </div>
     </div>
   </div>
@@ -13,15 +15,16 @@
 
 <script>
 import AppSidebarMenu from "../components/SideBar/AppSidebarMenu";
+import ScrollPanel from "primevue/scrollpanel";
 export default {
-  components: { AppSidebarMenu },
+  components: { AppSidebarMenu, ScrollPanel },
 };
 </script>
 
 <style scoped>
 .layout .layout__body {
   border-radius: 10px;
-  min-height: 99vh;
+  height: 99vh;
 }
 .body__container {
   border-radius: 10px;

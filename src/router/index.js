@@ -26,6 +26,12 @@ const routes = [
       import(/* webpackChunkName: "pages" */ "../views/PageEditor.vue"),
   },
   {
+    path: "/pages/new",
+    name: "PagesNew",
+    component: () =>
+      import(/* webpackChunkName: "pages" */ "../views/PageEditor.vue"),
+  },
+  {
     path: "/news",
     name: "News",
     component: () =>

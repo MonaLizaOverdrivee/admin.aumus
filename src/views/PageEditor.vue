@@ -2,7 +2,12 @@
   <div class="p-d-flex p-jc-between">
     <h1 class="p-m-0">{{ dataPage.Title }}</h1>
     <div>
-      <Button label="Сохранить" icon="pi pi-check" class="p-button-success" />
+      <Button
+        label="Сохранить"
+        icon="pi pi-check"
+        class="p-button-success"
+        @click="savePage"
+      />
       <Button label="Выход" icon="pi pi-times" class="p-button-danger p-ml-2" />
     </div>
   </div>
@@ -70,7 +75,7 @@
     <PageEditorModalChooseElement />
     <template #footer>
       <Button label="Отмена" icon="pi pi-times" @click="close" class="p-button-text" />
-      <Button label="Выбрать" icon="pi pi-check" @click="close" autofocus />
+      <Button label="Выбрать" icon="pi pi-check" @click="addElementToPage" autofocus />
     </template>
   </Dialog>
 </template>
@@ -81,12 +86,13 @@ import Dialog from "primevue/dialog";
 import PageEditorModalChooseElement from "../components/Pages/PageEditorModalChooseElement";
 import { reactive, ref } from "vue";
 import { useStore } from "vuex";
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from "vue-router";
 export default {
   components: { Button, PageEditorModalChooseElement, Dialog },
   props: ["id"],
   setup() {
-    const router = useRouter()
+    const router = useRouter();
+    const route = useRoute();
     const store = useStore();
     const dataPage = reactive(store.getters["pages/editablePage"]);
     const display = ref(false);
@@ -95,13 +101,29 @@ export default {
     }
     function close() {
       display.value = false;
-      router.push({ query: {} })
+      router.push({ query: {} });
+    }
+    function addElementToPage() {
+      store.commit("pages/SET_PAGE_DATA_ELEMENT", {
+        type: route.query.type,
+        style: route.query.style,
+      });
+      close();
+    }
+    function savePage() {
+      if (route.fullPath === "/pages/new") {
+        store.dispatch("pages/saveNewPage");
+      } else {
+        store.dispatch("pages/saveEditablePage");
+      }
     }
     return {
       dataPage,
       addElement,
       display,
       close,
+      addElementToPage,
+      savePage,
     };
   },
 };
