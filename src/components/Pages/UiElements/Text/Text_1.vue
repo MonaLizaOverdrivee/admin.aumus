@@ -22,7 +22,10 @@ export default {
   setup() {
     const store = useStore();
     const value = ref("sss");
-    watch(value, () => store.commit("pages/SET_DATA_ELEMENT", value.value));
+    watch(value, () => store.commit("pages/SET_DATA_ELEMENT", htmlParce(value.value)));
+    function htmlParce(str) {
+      return str.slice(3, str.length - 4);
+    }
     return {
       value,
     };

@@ -53,7 +53,7 @@
   <hr />
   <div class="p-d-flex p-flex-column">
     <div v-for="itm in dataPage.PageData" :key="itm">
-      <pre>{{ itm }}</pre>
+      <component :is="itm.type + '-view_' + itm.style" :data="itm.data" />
     </div>
   </div>
   <div class="p-d-flex p-jc-center">
@@ -83,12 +83,13 @@
 <script>
 import Button from "primevue/button";
 import Dialog from "primevue/dialog";
+import TextView_1 from "../components/Pages/UiElements/Text/TextView_1";
 import PageEditorModalChooseElement from "../components/Pages/PageEditorModalChooseElement";
 import { reactive, ref } from "vue";
 import { useStore } from "vuex";
 import { useRouter, useRoute } from "vue-router";
 export default {
-  components: { Button, PageEditorModalChooseElement, Dialog },
+  components: { Button, PageEditorModalChooseElement, Dialog, TextView_1 },
   props: ["id"],
   setup() {
     const router = useRouter();
