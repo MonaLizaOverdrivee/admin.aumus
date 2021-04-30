@@ -4,6 +4,7 @@ export default {
   render() {
     return h("p", {
       innerHTML: this.data,
+      class: ["p-m-0"],
     });
   },
   props: ["data"],

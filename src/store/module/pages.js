@@ -7,7 +7,6 @@ export default {
       pagesCount: null,
       pages: [],
       editablePage: {},
-      currentElementData: null,
     };
   },
   getters: {
@@ -23,16 +22,8 @@ export default {
     SET_PAGES_LIST(state, pages) {
       state.pages = pages;
     },
-    SET_DATA_ELEMENT(state, data) {
-      state.currentElementData = data;
-    },
     SET_PAGE_DATA_ELEMENT(state, element) {
-      state.editablePage.PageData.push({
-        ...element,
-        order: state.editablePage.PageData.length,
-        data: state.currentElementData,
-      });
-      state.currentElementData = null;
+      state.editablePage.PageData.push(element);
     },
     SET_EDITABLE_PAGE(state, page) {
       state.editablePage = page;

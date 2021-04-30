@@ -60,7 +60,7 @@
     <Button
       icon="pi pi-plus"
       class="p-button-rounded p-button-outlined p-button-lg"
-      @click="addElement"
+      @click="addElementButtonClick"
     />
   </div>
   <pre>{{ dataPage }}</pre>
@@ -72,7 +72,12 @@
     :maximizable="true"
     :modal="true"
   >
-    <PageEditorModalChooseElement />
+    <div class="p-grid">
+      <div class="p-col-3 menu_side p-p-0"><PanelMenu :model="menu" /></div>
+      <div class="p-col content_side">
+        <component :is="nameComponent" ref="comp" />
+      </div>
+    </div>
     <template #footer>
       <Button label="Отмена" icon="pi pi-times" @click="close" class="p-button-text" />
       <Button label="Выбрать" icon="pi pi-check" @click="addElementToPage" autofocus />
@@ -83,22 +88,26 @@
 <script>
 import Button from "primevue/button";
 import Dialog from "primevue/dialog";
-import TextView_1 from "../components/Pages/UiElements/Text/TextView_1";
-import PageEditorModalChooseElement from "../components/Pages/PageEditorModalChooseElement";
-import { reactive, ref } from "vue";
+import menuItems from "../db/uiElements";
+import PanelMenu from "primevue/panelmenu";
+import * as uiEditorComponents from "../db/uiEditorComponents";
+import * as uiViewComponents from "../db/uiViewComponents";
+import { reactive, ref, computed, onMounted } from "vue";
 import { useStore } from "vuex";
 import { useRouter, useRoute } from "vue-router";
 export default {
-  components: { Button, PageEditorModalChooseElement, Dialog, TextView_1 },
+  components: { Button, Dialog, PanelMenu, ...uiEditorComponents, ...uiViewComponents },
   props: ["id"],
   setup() {
+    const comp = ref(null);
     const router = useRouter();
     const route = useRoute();
     const store = useStore();
     const dataPage = reactive(store.getters["pages/editablePage"]);
     const display = ref(false);
-    function addElement() {
+    function addElementButtonClick() {
       display.value = true;
+      console.dir(comp);
     }
     function close() {
       display.value = false;
@@ -108,7 +117,10 @@ export default {
       store.commit("pages/SET_PAGE_DATA_ELEMENT", {
         type: route.query.type,
         style: route.query.style,
+        order: dataPage.PageData.length,
+        data: comp.value.htmlParce(),
       });
+      console.log(comp.value.htmlParce());
       close();
     }
     function savePage() {
@@ -118,13 +130,39 @@ export default {
         store.dispatch("pages/saveEditablePage");
       }
     }
+    onMounted(() => {
+      menu.value = getMenuItem();
+    });
+    const menu = ref([]);
+    function getMenuItem() {
+      const menuParse = menuItems.map((itm) => {
+        const items = itm.items.map((subitm, index) => ({
+          label: subitm.label,
+          to: `?type=${itm.type}&style=${index + 1}`,
+          class: computed(() => "active"),
+        }));
+        return {
+          label: itm.label,
+          icon: itm.icon,
+          items,
+        };
+      });
+      return menuParse;
+    }
+    const nameComponent = computed(
+      () => route.query.type + "-content_" + route.query.style
+    );
+
     return {
       dataPage,
-      addElement,
+      addElementButtonClick,
       display,
       close,
       addElementToPage,
       savePage,
+      comp,
+      menu,
+      nameComponent,
     };
   },
 };
