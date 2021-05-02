@@ -8,7 +8,12 @@
         class="p-button-success"
         @click="savePage"
       />
-      <Button label="Выход" icon="pi pi-times" class="p-button-danger p-ml-2" />
+      <Button
+        label="Выход"
+        icon="pi pi-times"
+        class="p-button-danger p-ml-2"
+        @click="$router.push('/pages')"
+      />
     </div>
   </div>
   <div class="p-d-flex p-mt-3">
@@ -52,20 +57,27 @@
   </div>
   <hr />
   <div class="p-d-flex p-flex-column">
-    <div v-for="itm in dataPage.PageData" :key="itm">
-      <component :is="itm.type + '-view_' + itm.style" :data="itm.data" />
-    </div>
+    {{ $attrs.emit }}
+    <component
+      v-for="(itm, i) in dataPage.PageData"
+      :key="itm"
+      :is="itm.type + '-view_' + itm.style"
+      :data="itm.data"
+      :bg="itm.bg"
+      @up="upElement(i, i - 1)"
+      @down="downElement(i, i + 1)"
+    />
   </div>
-  <div class="p-d-flex p-jc-center">
+  <div class="p-d-flex p-jc-center p-my-2">
     <Button
       icon="pi pi-plus"
       class="p-button-rounded p-button-outlined p-button-lg"
-      @click="addElementButtonClick"
+      @click="addElementManagerOpen"
     />
   </div>
   <pre>{{ dataPage }}</pre>
   <Dialog
-    header="Выберете элемент"
+    header="Менеджер элементов"
     :closable="false"
     v-model:visible="display"
     :style="{ width: '80vw' }"
@@ -75,17 +87,36 @@
     <div class="p-grid">
       <div class="p-col-3 menu_side p-p-0"><PanelMenu :model="menu" /></div>
       <div class="p-col content_side">
-        <component :is="nameComponent" ref="comp" />
+        <component
+          v-if="$route.query.type"
+          :is="nameComponentContent"
+          ref="componentContent"
+        >
+          <strong>Цвета блока: </strong><ColorPicker v-model="bgElement" />
+        </component>
+        <div
+          class="p-d-flex p-jc-center p-ai-center"
+          style="height: 100%; color: gray"
+          v-else
+        >
+          <h1>Выбирете элемент из списка</h1>
+        </div>
       </div>
     </div>
     <template #footer>
-      <Button label="Отмена" icon="pi pi-times" @click="close" class="p-button-text" />
-      <Button label="Выбрать" icon="pi pi-check" @click="addElementToPage" autofocus />
+      <Button
+        label="Отмена"
+        icon="pi pi-times"
+        @click="close"
+        class="p-button-text"
+      />
+      <Button label="Выбрать" icon="pi pi-check" @click="addElementToPage" />
     </template>
   </Dialog>
 </template>
 
 <script>
+import ColorPicker from "primevue/colorpicker";
 import Button from "primevue/button";
 import Dialog from "primevue/dialog";
 import menuItems from "../db/uiElements";
@@ -96,18 +127,27 @@ import { reactive, ref, computed, onMounted } from "vue";
 import { useStore } from "vuex";
 import { useRouter, useRoute } from "vue-router";
 export default {
-  components: { Button, Dialog, PanelMenu, ...uiEditorComponents, ...uiViewComponents },
+  components: {
+    Button,
+    Dialog,
+    PanelMenu,
+    ColorPicker,
+    ...uiEditorComponents,
+    ...uiViewComponents,
+  },
   props: ["id"],
   setup() {
-    const comp = ref(null);
     const router = useRouter();
     const route = useRoute();
     const store = useStore();
     const dataPage = reactive(store.getters["pages/editablePage"]);
     const display = ref(false);
-    function addElementButtonClick() {
+    const componentContent = ref(null);
+    const bgElement = ref("ffffff");
+    const menu = ref([]);
+    function addElementManagerOpen() {
       display.value = true;
-      console.dir(comp);
+      console.dir();
     }
     function close() {
       display.value = false;
@@ -118,9 +158,10 @@ export default {
         type: route.query.type,
         style: route.query.style,
         order: dataPage.PageData.length,
-        data: comp.value.htmlParce(),
+        data: componentContent.value.getElementData(),
+        bg: "#" + bgElement.value,
       });
-      console.log(comp.value.htmlParce());
+      bgElement.value = "ffffff";
       close();
     }
     function savePage() {
@@ -133,7 +174,6 @@ export default {
     onMounted(() => {
       menu.value = getMenuItem();
     });
-    const menu = ref([]);
     function getMenuItem() {
       const menuParse = menuItems.map((itm) => {
         const items = itm.items.map((subitm, index) => ({
@@ -149,20 +189,37 @@ export default {
       });
       return menuParse;
     }
-    const nameComponent = computed(
+    function upElement(old_index, new_index) {
+      dataPage.PageData.splice(
+        new_index,
+        0,
+        dataPage.PageData.splice(old_index, 1)[0]
+      );
+    }
+    function downElement(old_index, new_index) {
+      dataPage.PageData.splice(
+        new_index,
+        0,
+        dataPage.PageData.splice(old_index, 1)[0]
+      );
+    }
+    const nameComponentContent = computed(
       () => route.query.type + "-content_" + route.query.style
     );
 
     return {
       dataPage,
-      addElementButtonClick,
+      addElementManagerOpen,
       display,
       close,
       addElementToPage,
       savePage,
-      comp,
+      componentContent,
       menu,
-      nameComponent,
+      nameComponentContent,
+      bgElement,
+      upElement,
+      downElement,
     };
   },
 };

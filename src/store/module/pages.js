@@ -13,7 +13,6 @@ export default {
     pagesCount: ({ pagesCount }) => pagesCount,
     pages: ({ pages }) => pages,
     editablePage: ({ editablePage }) => editablePage,
-    editablePageDataOrder: ({ editablePage }) => editablePage.PageData.length,
   },
   mutations: {
     SET_PAGES_COUNT(state, payload) {

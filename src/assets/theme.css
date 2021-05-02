@@ -17,3 +17,8 @@ button {
     считают, что необходимо оставлять стрелочный вид для кнопок */
     cursor: pointer;
   }
+.container {
+    max-width: 1500px;
+    margin-left: auto;
+    margin-right: auto;
+}

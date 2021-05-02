@@ -7,7 +7,11 @@
       selectionMode="single"
       @row-click="selectPage($event.data)"
     >
-      <Column field="Title" header="Название страницы" style="min-width: 200px"></Column>
+      <Column
+        field="Title"
+        header="Название страницы"
+        style="min-width: 200px"
+      ></Column>
       <Column field="URL" header="URL" style="min-width: 200px"></Column>
       <Column field="created_at" header="Создано" style="min-width: 200px">
         <template #body="slotProps">

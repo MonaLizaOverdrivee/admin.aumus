@@ -2,7 +2,7 @@
   <TabView>
     <TabPanel header="Стиль">
       <img src="" alt="" />
-      {{ $route.query.type }}
+      <slot />
     </TabPanel>
     <TabPanel header="Контент">
       <Editor v-model="value" editorStyle="height: 300px" />
@@ -19,8 +19,8 @@ export default {
   components: { TabView, TabPanel, Editor },
   emits: ["data-component"],
   setup() {
-    const value = ref("sss");
-    function htmlParce() {
+    const value = ref("");
+    function getElementData() {
       let newString = "";
       let start = 0;
 
@@ -35,7 +35,7 @@ export default {
     }
     return {
       value,
-      htmlParce,
+      getElementData,
     };
   },
 };

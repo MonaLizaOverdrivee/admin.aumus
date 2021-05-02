@@ -8,7 +8,9 @@
         <InputText type="text" placeholder="Поиск" />
       </span>
     </div>
-    <div><Button label="Новая страница" icon="pi pi-plus" @click="createPage" /></div>
+    <div>
+      <Button label="Новая страница" icon="pi pi-plus" @click="createPage" />
+    </div>
   </div>
   <PageIndex :pages="pages" />
 </template>
@@ -34,7 +36,7 @@ export default {
     function createPage() {
       store.commit("pages/SET_EDITABLE_PAGE", {
         Title: "1",
-        PageData: [{data: '213'}],
+        PageData: [{ data: "213" }],
         URL: "1",
       });
       router.push("/pages/new");

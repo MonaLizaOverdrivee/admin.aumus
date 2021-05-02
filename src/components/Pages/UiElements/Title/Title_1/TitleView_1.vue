@@ -1,8 +1,9 @@
 <template>
   <ElementViewWrapper :bg="bg">
-    <p v-html="data" class="p-my-2"></p>
+    <h2 class="p-mt-5 p-mb-0">{{ data }}</h2>
   </ElementViewWrapper>
 </template>
+
 <script>
 import ElementViewWrapper from "../../ElementViewWrapper";
 export default {

@@ -75,8 +75,7 @@ div.p-menu {
 .p-menu .p-menuitem-link .p-menuitem-text,
 .p-menu .p-menuitem-link .p-menuitem-icon,
 .p-menu .p-menuitem-link:hover .p-menuitem-icon,
-.p-menu .p-menuitem-link:hover .p-menuitem-text
-{
+.p-menu .p-menuitem-link:hover .p-menuitem-text {
   color: white !important;
 }
 .p-menu .p-menuitem-link:hover {
