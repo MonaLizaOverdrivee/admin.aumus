@@ -1,5 +1,5 @@
 <template>
-  <div class="p-mt-2">
+  <div class="p-mt-2 pages_table">
     <DataTable
       :value="pages"
       :scrollable="true"
@@ -33,7 +33,6 @@ import DataTable from "primevue/datatable";
 import Column from "primevue/column";
 import { useRouter } from "vue-router";
 import { useStore } from "vuex";
-import { ref } from "vue";
 
 export default {
   components: { DataTable, Column },
@@ -41,26 +40,17 @@ export default {
   setup() {
     const store = useStore();
     const router = useRouter();
-    const products = ref([
-      {
-        code: 34,
-        name: "asdsad",
-        category: "asdbvcvb",
-        quantity: 12,
-        price: 230,
-      },
-    ]);
     function selectPage(dataPage) {
       router.push(`/pages/${dataPage.id}`);
       store.commit("pages/SET_EDITABLE_PAGE", dataPage);
     }
-    return { products, selectPage };
+    return { selectPage };
   },
 };
 </script>
 
-<style>
-.p-datatable-wrapper {
+<style scoped>
+.pages_table :deep(.p-datatable-wrapper) {
   border-radius: 8px;
 }
 </style>

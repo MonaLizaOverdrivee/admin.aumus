@@ -57,15 +57,16 @@
   </div>
   <hr />
   <div class="p-d-flex p-flex-column">
-    {{ $attrs.emit }}
     <component
       v-for="(itm, i) in dataPage.PageData"
       :key="itm"
+      :index="i"
       :is="itm.type + '-view_' + itm.style"
       :data="itm.data"
       :bg="itm.bg"
       @up="upElement(i, i - 1)"
       @down="downElement(i, i + 1)"
+      @open-elementManager="editElementManagerOpen(i)"
     />
   </div>
   <div class="p-d-flex p-jc-center p-my-2">
@@ -87,13 +88,11 @@
     <div class="p-grid">
       <div class="p-col-3 menu_side p-p-0"><PanelMenu :model="menu" /></div>
       <div class="p-col content_side">
-        <component
-          v-if="$route.query.type"
-          :is="nameComponentContent"
-          ref="componentContent"
-        >
-          <strong>Цвета блока: </strong><ColorPicker v-model="bgElement" />
-        </component>
+        <keep-alive v-if="$route.query.type">
+          <component :is="nameComponentContent" ref="componentContent">
+            <strong>Цвета блока: </strong><ColorPicker v-model="bgElement" />
+          </component>
+        </keep-alive>
         <div
           class="p-d-flex p-jc-center p-ai-center"
           style="height: 100%; color: gray"
@@ -145,22 +144,48 @@ export default {
     const componentContent = ref(null);
     const bgElement = ref("ffffff");
     const menu = ref([]);
+    const editIndex = ref(null);
     function addElementManagerOpen() {
       display.value = true;
+      console.log();
+    }
+    function editElementManagerOpen(i) {
+      display.value = true;
+      editIndex.value = i;
+      router
+        .push({
+          query: {
+            type: dataPage.PageData[i].type,
+            style: dataPage.PageData[i].style,
+          },
+        })
+        .then(
+          () => (componentContent.value.dataElement = dataPage.PageData[i].data)
+        );
       console.dir();
     }
     function close() {
       display.value = false;
+      editIndex.value = null;
       router.push({ query: {} });
     }
     function addElementToPage() {
-      store.commit("pages/SET_PAGE_DATA_ELEMENT", {
+      console.log('before obj', bgElement.value);
+      const element = {
         type: route.query.type,
         style: route.query.style,
-        order: dataPage.PageData.length,
         data: componentContent.value.getElementData(),
         bg: "#" + bgElement.value,
-      });
+      };
+       console.log('after obj', bgElement.value);
+      if (!editIndex.value && editIndex.value !== 0) {
+        store.commit("pages/SET_PAGE_DATA_ELEMENT", element);
+      } else {
+        store.commit("pages/SET_PAGE_DATA_EDIT_ELEMENT", {
+          element,
+          i: editIndex.value,
+        });
+      }
       bgElement.value = "ffffff";
       close();
     }
@@ -179,7 +204,12 @@ export default {
         const items = itm.items.map((subitm, index) => ({
           label: subitm.label,
           to: `?type=${itm.type}&style=${index + 1}`,
-          class: computed(() => "active"),
+          style: computed(() =>
+            route.query.type === itm.type &&
+            route.query.style === `${index + 1}`
+              ? "background-color: var(--surface-c)"
+              : ""
+          ),
         }));
         return {
           label: itm.label,
@@ -220,13 +250,14 @@ export default {
       bgElement,
       upElement,
       downElement,
+      editElementManagerOpen,
     };
   },
 };
 </script>
 
-<style>
-.p-tabview .p-tabview-panels {
+<style scoped>
+.content_side :deep(.p-tabview-panels) {
   padding: 1.25rem 0 !important;
 }
 </style>

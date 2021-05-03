@@ -2,13 +2,13 @@
   <div :style="'background-color: ' + bg" class="wrapper__container" @mouseover="doVisibleOptionBar" @mouseleave="doInvisbleOptionsBar">
     <div class="option__bar" v-if="displayOptionBar">
       <span class="p-buttonset p-mr-2">
-        <Button label="Контент" class="p-button-sm" />
-        <Button icon="pi pi-trash" class="p-button-sm" />
+        <Button label="Контент" class="p-button-sm" @click="$emit('open-elementManager')"/>
+        <Button icon="pi pi-trash" class="p-button-sm" @click="deleteElement"/>
         <Button icon="pi pi-power-off" class="p-button-sm" />
       </span>
       <span class="p-buttonset">
-        <Button icon="pi pi-arrow-up" class="p-button-sm " @click="$emit('up')"/>
-        <Button icon="pi pi-arrow-down" class="p-button-sm " @click="$emit('down')"/>
+        <Button icon="pi pi-arrow-up" class="p-button-sm " @click="$emit('up')" :disabled="firstElement"/>
+        <Button icon="pi pi-arrow-down" class="p-button-sm " @click="$emit('down')" :disabled="lastElement"/>
       </span>
     </div>
     <div class="container">
@@ -20,16 +20,28 @@
 import Button from "primevue/button";
 export default {
   components: { Button },
-  emits: ['up', 'down'],
+  emits: ['up', 'down', 'open-elementManager'],
   props: {
     bg: {
       type: String,
       default: "#ffffff",
     },
+    index: {
+      type: Number,
+      required: true,
+    }
   },
   data() {
     return {
       displayOptionBar: false,
+    }
+  },
+  computed: {
+    firstElement() {
+      return !this.index
+    },
+    lastElement() {
+      return this.index === this.$store.getters['pages/qntElements'] - 1
     }
   },
   methods: {
@@ -39,6 +51,9 @@ export default {
     doInvisbleOptionsBar() {
       this.displayOptionBar = false
     },
+    deleteElement() {
+      this.$store.commit('pages/DELETE_ELEMENT', this.index)
+    }
   }
 };
 </script>

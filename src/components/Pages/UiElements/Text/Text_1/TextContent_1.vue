@@ -5,7 +5,7 @@
       <slot />
     </TabPanel>
     <TabPanel header="Контент">
-      <Editor v-model="value" editorStyle="height: 300px" />
+      <Editor v-model="dataElement" editorStyle="height: 300px" />
     </TabPanel>
   </TabView>
 </template>
@@ -19,22 +19,22 @@ export default {
   components: { TabView, TabPanel, Editor },
   emits: ["data-component"],
   setup() {
-    const value = ref("");
+    const dataElement = ref("");
     function getElementData() {
       let newString = "";
       let start = 0;
 
-      while (start < value.value.length) {
-        const strtIndex = value.value.indexOf("<p>", start) + 3;
-        const endIndex = value.value.indexOf("</p>", start);
-        newString += value.value.substring(strtIndex, endIndex);
+      while (start < dataElement.value.length) {
+        const strtIndex = dataElement.value.indexOf("<p>", start) + 3;
+        const endIndex = dataElement.value.indexOf("</p>", start);
+        newString += dataElement.value.substring(strtIndex, endIndex);
         start = endIndex + 4;
       }
 
       return newString.trim();
     }
     return {
-      value,
+      dataElement,
       getElementData,
     };
   },

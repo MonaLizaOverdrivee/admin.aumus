@@ -1,6 +1,8 @@
 <template>
-  <h2 class="p-m-0" style="color: white; text-align: center">Dashboard</h2>
-  <Menu :model="items" />
+  <div class="menu">
+    <h2 class="p-m-0" style="color: white; text-align: center">Dashboard</h2>
+    <Menu :model="items" />
+  </div>
 </template>
 
 <script>
@@ -57,28 +59,28 @@ export default {
 };
 </script>
 
-<style>
-div.p-menu {
+<style lang="scss" scoped>
+.menu :deep(.p-menu) {
   width: auto;
   border-color: transparent;
   padding: 0px;
   background-color: var(--surface-800);
-}
-.p-menuitem {
-  border-left: 4px solid transparent;
-}
-.active {
-  border-left: 4px solid var(--primary-color);
-  background-color: var(--surface-700);
-  /* font-weight: 500; */
-}
-.p-menu .p-menuitem-link .p-menuitem-text,
-.p-menu .p-menuitem-link .p-menuitem-icon,
-.p-menu .p-menuitem-link:hover .p-menuitem-icon,
-.p-menu .p-menuitem-link:hover .p-menuitem-text {
-  color: white !important;
-}
-.p-menu .p-menuitem-link:hover {
-  background-color: var(--surface-700) !important;
+  .p-menuitem {
+    border-left: 4px solid transparent;
+  }
+  .p-menuitem-link .p-menuitem-text,
+  .p-menuitem-link .p-menuitem-icon,
+  .p-menuitem-link:hover .p-menuitem-icon,
+  .p-menuitem-link:hover .p-menuitem-text {
+    color: white !important;
+  }
+  .active {
+    border-left: 4px solid var(--primary-color);
+    background-color: var(--surface-700);
+    /* font-weight: 500; */
+  }
+  .p-menuitem-link:hover {
+    background-color: var(--surface-700) !important;
+  }
 }
 </style>

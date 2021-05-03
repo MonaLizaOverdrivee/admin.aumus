@@ -13,6 +13,7 @@ export default {
     pagesCount: ({ pagesCount }) => pagesCount,
     pages: ({ pages }) => pages,
     editablePage: ({ editablePage }) => editablePage,
+    qntElements: ({ editablePage }) => editablePage.PageData.length
   },
   mutations: {
     SET_PAGES_COUNT(state, payload) {
@@ -24,9 +25,18 @@ export default {
     SET_PAGE_DATA_ELEMENT(state, element) {
       state.editablePage.PageData.push(element);
     },
+    DELETE_ELEMENT(state, index) {
+      state.editablePage.PageData.splice(index, 1)
+      console.log(index)
+      console.log(state.editablePage.PageData)
+    },
     SET_EDITABLE_PAGE(state, page) {
       state.editablePage = page;
     },
+    SET_PAGE_DATA_EDIT_ELEMENT(state, payload) {
+      state.editablePage.PageData[payload.i] = payload.element
+      console.log(payload)
+    }
   },
   actions: {
     async loadPagesCount({ commit }) {

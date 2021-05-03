@@ -1,5 +1,5 @@
 <template>
-  <ElementViewWrapper :bg="bg">
+  <ElementViewWrapper :bg="bg" :index="index">
     <p v-html="data" class="p-my-2"></p>
   </ElementViewWrapper>
 </template>
@@ -7,7 +7,7 @@
 import ElementViewWrapper from "../../ElementViewWrapper";
 export default {
   components: { ElementViewWrapper },
-  props: ["data", "bg"],
+  props: ["data", "bg", "index"],
 };
 </script>
 

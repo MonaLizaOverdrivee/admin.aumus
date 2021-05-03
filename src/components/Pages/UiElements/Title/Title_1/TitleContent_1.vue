@@ -2,7 +2,6 @@
   <TabView>
     <TabPanel header="Стиль">
       <img src="" alt="" />
-      {{ $route.query.type }}
       <slot />
     </TabPanel>
     <TabPanel header="Контент">
