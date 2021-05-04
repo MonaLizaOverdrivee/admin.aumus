@@ -1,11 +1,11 @@
 <template>
   <div class="p-d-flex p-jc-between">
-    <h1 class="p-m-0">{{ dataPage.Title }}</h1>
+    <h1 class="p-m-0">{{ dataPage.Title }} {{ modeMangerElement }}</h1>
     <div>
-      <Button
+      <AppLoaderButton
         label="Сохранить"
-        icon="pi pi-check"
-        class="p-button-success"
+        iconBtn="pi pi-check"
+        classBtn="p-button-success"
         @click="savePage"
       />
       <Button
@@ -56,6 +56,7 @@
     <div></div>
   </div>
   <hr />
+  <br>
   <div class="p-d-flex p-flex-column">
     <component
       v-for="(itm, i) in dataPage.PageData"
@@ -67,6 +68,7 @@
       @up="upElement(i, i - 1)"
       @down="downElement(i, i + 1)"
       @open-elementManager="editElementManagerOpen(i)"
+      @open-elementManagerBetween ="betweenElementManagerOpen(i)"
     />
   </div>
   <div class="p-d-flex p-jc-center p-my-2">
@@ -112,11 +114,13 @@
       <Button label="Выбрать" icon="pi pi-check" @click="addElementToPage" />
     </template>
   </Dialog>
+  <Toast />
 </template>
 
 <script>
 import ColorPicker from "primevue/colorpicker";
 import Button from "primevue/button";
+import AppLoaderButton from "@/components/UI/AppLoaderButton"
 import Dialog from "primevue/dialog";
 import menuItems from "../db/uiElements";
 import PanelMenu from "primevue/panelmenu";
@@ -125,33 +129,39 @@ import * as uiViewComponents from "../db/uiViewComponents";
 import { reactive, ref, computed, onMounted } from "vue";
 import { useStore } from "vuex";
 import { useRouter, useRoute } from "vue-router";
+import { useToast } from "primevue/usetoast";
+import Toast from 'primevue/toast';
 export default {
   components: {
+    AppLoaderButton,
     Button,
     Dialog,
     PanelMenu,
     ColorPicker,
+    Toast,
     ...uiEditorComponents,
     ...uiViewComponents,
   },
-  props: ["id"],
   setup() {
     const router = useRouter();
     const route = useRoute();
     const store = useStore();
+    const toast = useToast()
     const dataPage = reactive(store.getters["pages/editablePage"]);
     const display = ref(false);
     const componentContent = ref(null);
     const bgElement = ref("ffffff");
     const menu = ref([]);
     const editIndex = ref(null);
+    const modeMangerElement = ref("")
     function addElementManagerOpen() {
+      modeMangerElement.value = "new"
       display.value = true;
-      console.log();
     }
     function editElementManagerOpen(i) {
       display.value = true;
       editIndex.value = i;
+      modeMangerElement.value = "edit"
       router
         .push({
           query: {
@@ -162,38 +172,52 @@ export default {
         .then(
           () => (componentContent.value.dataElement = dataPage.PageData[i].data)
         );
-      console.dir();
+    }
+    function betweenElementManagerOpen(i) {
+      display.value = true;
+      modeMangerElement.value = "between"
+      editIndex.value = i;
     }
     function close() {
       display.value = false;
       editIndex.value = null;
+      modeMangerElement.value = ""
       router.push({ query: {} });
     }
     function addElementToPage() {
-      console.log('before obj', bgElement.value);
       const element = {
         type: route.query.type,
         style: route.query.style,
         data: componentContent.value.getElementData(),
         bg: "#" + bgElement.value,
       };
-       console.log('after obj', bgElement.value);
-      if (!editIndex.value && editIndex.value !== 0) {
+      if (modeMangerElement.value === "new") {
         store.commit("pages/SET_PAGE_DATA_ELEMENT", element);
-      } else {
+      } else if(modeMangerElement.value === "edit"){
         store.commit("pages/SET_PAGE_DATA_EDIT_ELEMENT", {
           element,
           i: editIndex.value,
         });
+      } else {
+        store.commit("pages/SET_PAGE_DATA_ELEMENT_BETWEEN", {
+          data: element,
+          i: editIndex.value,
+        })
       }
       bgElement.value = "ffffff";
       close();
     }
-    function savePage() {
-      if (route.fullPath === "/pages/new") {
-        store.dispatch("pages/saveNewPage");
+    async function savePage() {
+      try {
+        if (route.fullPath === "/pages/new") {
+        await store.dispatch("pages/saveNewPage");
       } else {
-        store.dispatch("pages/saveEditablePage");
+        await store.dispatch("pages/saveEditablePage");
+      }
+      toast.add({severity:'success', summary: 'Успешно', detail: 'Страница сохранена', life: 3000})
+      } catch ({ status, statusText }) {
+        toast.add({severity:'error', summary: 'Ошибка!', detail: 'Код:' + status + ' ' + statusText, life: 3000})
+        console.log(status, statusText)
       }
     }
     onMounted(() => {
@@ -251,6 +275,8 @@ export default {
       upElement,
       downElement,
       editElementManagerOpen,
+      betweenElementManagerOpen,
+      modeMangerElement
     };
   },
 };

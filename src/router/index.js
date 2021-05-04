@@ -22,7 +22,6 @@ const routes = [
   {
     path: "/pages/:id",
     name: "PagesId",
-    props: true,
     component: () =>
       import(/* webpackChunkName: "pages" */ "../views/PageEditor.vue"),
   },
@@ -55,6 +54,12 @@ const routes = [
     name: "Access",
     component: () =>
       import(/* webpackChunkName: "pages" */ "../views/Access.vue"),
+  },
+  {
+    path: "/errors",
+    name: "Errors",
+    component: () =>
+      import(/* webpackChunkName: "pages" */ "../views/Errors.vue"),
   },
 ];
 

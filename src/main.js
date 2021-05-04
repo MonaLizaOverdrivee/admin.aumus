@@ -9,10 +9,12 @@ import store from "./store";
 import PrimeVue from "primevue/config";
 import "./assets/theme.css";
 import ConfirmationService from "primevue/confirmationservice";
+import ToastService from 'primevue/toastservice';
 
 createApp(App)
   .use(store)
   .use(router)
   .use(PrimeVue)
   .use(ConfirmationService)
+  .use(ToastService)
   .mount("#app");

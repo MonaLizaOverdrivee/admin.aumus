@@ -17,13 +17,12 @@ import Editor from "primevue/editor";
 import { ref } from "vue";
 export default {
   components: { TabView, TabPanel, Editor },
-  emits: ["data-component"],
   setup() {
     const dataElement = ref("");
     function getElementData() {
+      if(dataElement.value.indexOf("<p>")  === -1) return dataElement.value;
       let newString = "";
       let start = 0;
-
       while (start < dataElement.value.length) {
         const strtIndex = dataElement.value.indexOf("<p>", start) + 3;
         const endIndex = dataElement.value.indexOf("</p>", start);

@@ -51,6 +51,12 @@ export default {
         to: "/access",
         class: computed(() => (route.path === "/access" ? "active" : "")),
       },
+      {
+        label: "Ошибки",
+        icon: "pi pi-ban",
+        to: "/",
+        class: computed(() => (route.path === "/errors" ? "active" : "")),
+      },
     ]);
     return {
       items,
@@ -65,8 +71,8 @@ export default {
   border-color: transparent;
   padding: 0px;
   background-color: var(--surface-800);
-  .p-menuitem {
-    border-left: 4px solid transparent;
+  .p-menuitem-link {
+    border-left: 5px solid transparent;
   }
   .p-menuitem-link .p-menuitem-text,
   .p-menuitem-link .p-menuitem-icon,
@@ -74,10 +80,10 @@ export default {
   .p-menuitem-link:hover .p-menuitem-text {
     color: white !important;
   }
-  .active {
-    border-left: 4px solid var(--primary-color);
+  .active .p-menuitem-link {
+    border-left-color: var(--primary-color);
     background-color: var(--surface-700);
-    /* font-weight: 500; */
+    font-weight: 500; 
   }
   .p-menuitem-link:hover {
     background-color: var(--surface-700) !important;

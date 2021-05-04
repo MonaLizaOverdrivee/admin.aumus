@@ -1,5 +1,6 @@
 import { createStore } from "vuex";
 import pages from "./module/pages";
+import loading from "./module/loading";
 
 export default createStore({
   state: {},
@@ -7,5 +8,6 @@ export default createStore({
   actions: {},
   modules: {
     pages,
+    loading,
   },
 });

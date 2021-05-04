@@ -25,6 +25,9 @@ export default {
     SET_PAGE_DATA_ELEMENT(state, element) {
       state.editablePage.PageData.push(element);
     },
+    SET_PAGE_DATA_ELEMENT_BETWEEN(state, element) {
+      state.editablePage.PageData.splice(element.i, 0, element.data);
+    },
     DELETE_ELEMENT(state, index) {
       state.editablePage.PageData.splice(index, 1)
       console.log(index)
@@ -47,15 +50,27 @@ export default {
       const { data } = await requestToDatabase.get("pages");
       commit("SET_PAGES_LIST", data);
     },
-    async saveEditablePage({ state }) {
-      const data = await requestToDatabase.put(
-        `pages/${state.editablePage.id}`,
-        state.editablePage
-      );
-      console.log(data);
+    async saveEditablePage({ state, commit }) {
+      try {
+        commit("loading/TOGGLE_LOADING_BUTTON", true, { root: true })
+        await requestToDatabase.put(`pages/${state.editablePage.id}`, state.editablePage);
+        commit("loading/TOGGLE_LOADING_BUTTON", false, { root: true })
+      } catch (error) {
+        commit("loading/TOGGLE_LOADING_BUTTON", false, { root: true })
+        console.log(error)
+        return Promise.reject(error.response)
+      }
     },
-    async saveNewPage({ state }) {
-      requestToDatabase.post("pages", state.editablePage);
+    async saveNewPage({ state, commit }) {
+      try {
+        commit("loading/TOGGLE_LOADING_BUTTON", true, { root: true })
+        await requestToDatabase.post("pages", state.editablePage);
+        commit("loading/TOGGLE_LOADING_BUTTON", false, { root: true })
+        
+      } catch (error) {
+        commit("loading/TOGGLE_LOADING_BUTTON", false, { root: true })
+        return Promise.reject(error.response)
+      }
     },
   },
 };
