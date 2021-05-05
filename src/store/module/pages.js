@@ -1,4 +1,6 @@
 import { requestToDatabase } from "../../axios/request";
+import isEqual from "lodash/isEqual"
+import cloneDeep  from "lodash/cloneDeep"
 
 export default {
   namespaced: true,
@@ -7,13 +9,15 @@ export default {
       pagesCount: null,
       pages: [],
       editablePage: {},
+      startEditablePage: {}
     };
   },
   getters: {
     pagesCount: ({ pagesCount }) => pagesCount,
     pages: ({ pages }) => pages,
     editablePage: ({ editablePage }) => editablePage,
-    qntElements: ({ editablePage }) => editablePage.PageData.length
+    qntElements: ({ editablePage }) => editablePage.PageData.length,
+    compare: ({ editablePage,  startEditablePage}) => isEqual(editablePage,  startEditablePage)
   },
   mutations: {
     SET_PAGES_COUNT(state, payload) {
@@ -30,15 +34,16 @@ export default {
     },
     DELETE_ELEMENT(state, index) {
       state.editablePage.PageData.splice(index, 1)
-      console.log(index)
-      console.log(state.editablePage.PageData)
     },
     SET_EDITABLE_PAGE(state, page) {
       state.editablePage = page;
+      state.startEditablePage = cloneDeep(page)
     },
     SET_PAGE_DATA_EDIT_ELEMENT(state, payload) {
       state.editablePage.PageData[payload.i] = payload.element
-      console.log(payload)
+    },
+    CHANGE_VISIBLE_ELEMENT(state, index) {
+      state.editablePage.PageData[index].visible = !state.editablePage.PageData[index].visible
     }
   },
   actions: {
@@ -53,7 +58,9 @@ export default {
     async saveEditablePage({ state, commit }) {
       try {
         commit("loading/TOGGLE_LOADING_BUTTON", true, { root: true })
-        await requestToDatabase.put(`pages/${state.editablePage.id}`, state.editablePage);
+        const { data } = await requestToDatabase.put(`pages/${state.editablePage.id}`, state.editablePage);
+        console.log(data)
+        commit('SET_EDITABLE_PAGE', data)
         commit("loading/TOGGLE_LOADING_BUTTON", false, { root: true })
       } catch (error) {
         commit("loading/TOGGLE_LOADING_BUTTON", false, { root: true })

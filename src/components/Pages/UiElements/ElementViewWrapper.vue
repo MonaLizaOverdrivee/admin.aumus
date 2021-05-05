@@ -4,13 +4,13 @@
       <div class="p-grid">
         <div class="p-col"></div>
         <div class="p-col p-d-flex p-jc-center add_button">
-          <Button icon="pi pi-plus" class="p-button-rounded p-button-sm" @click="$emit('open-elementManagerBetween')"/>
+          <Button icon="pi pi-plus" class="p-button-rounded p-button-sm" @click="$emit('openElementManagerBetween')"/>
         </div>
         <div class="p-col p-d-flex p-jc-end">
           <span class="p-buttonset p-mr-2">
-            <Button label="Контент" class="p-button-sm" @click="$emit('open-elementManager')"/>
-            <Button icon="pi pi-trash" class="p-button-sm" @click="deleteElement"/>
-            <Button icon="pi pi-power-off" class="p-button-sm" />
+            <Button label="Контент" class="p-button-sm" @click="$emit('openElementManager')"/>
+            <Button icon="pi pi-trash" class="p-button-sm" @click="$emit('delete')"/>
+            <Button icon="pi pi-power-off" class="p-button-sm" @click="$emit('hidden')"/>
           </span>
           <span class="p-buttonset">
             <Button icon="pi pi-arrow-down" class="p-button-sm " @click="$emit('down')" :disabled="lastElement"/>
@@ -19,22 +19,34 @@
         </div>
       </div>
     </div>
-    <div class="container">
+    <div class="container" v-if="visible">
       <slot />
     </div>
+      <div class="p-py-5 p-d-flex p-jc-center hidden_element" v-else>
+        <div class="p-as-end p-mr-2"><span class="pi pi-eye-slash hidden_element__icon"></span></div>
+        <div><span class="hidden_element__icon">элемент скрыт</span></div>
+      </div>
   </div>
 </template>
 <script>
 import Button from "primevue/button";
 export default {
   components: { Button },
-  emits: ['up', 'down', 'open-elementManager', 'open-elementManagerBetween'],
+  emits: ['up', 'down', 'openElementManager', 'openElementManagerBetween', 'delete', 'hidden'],
   props: {
     bg: {
       type: String,
       default: "#ffffff",
     },
     index: {
+      type: Number,
+      required: true
+    },
+    visible: {
+      type: Boolean,
+      required: true,
+    },
+    qntElements: {
       type: Number,
       required: true,
     }
@@ -46,10 +58,10 @@ export default {
   },
   computed: {
     firstElement() {
-      return !this.index
+      return this.index === 0
     },
     lastElement() {
-      return this.index === this.$store.getters['pages/qntElements'] - 1
+      return this.index === this.qntElements
     }
   },
   methods: {
@@ -59,14 +71,19 @@ export default {
     doInvisbleOptionsBar() {
       this.displayOptionBar = false
     },
-    deleteElement() {
-      this.$store.commit('pages/DELETE_ELEMENT', this.index)
-    }
   }
 };
 </script>
 
 <style scoped>
+.hidden_element {
+  background-color: var(--surface-200);
+  color: var(--surface-400);
+  cursor: default;
+}
+.hidden_element__icon {
+  font-size: 2rem;
+}
 .add_button {
   margin-top: -1.16rem;
 }

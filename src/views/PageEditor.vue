@@ -1,10 +1,10 @@
 <template>
   <div class="p-d-flex p-jc-between">
-    <h1 class="p-m-0">{{ dataPage.Title }} {{ modeMangerElement }}</h1>
+    <h1 class="p-m-0">{{ dataPage.Title }} {{ $store.getters['pages/compare'] }}</h1>
     <div>
       <AppLoaderButton
         label="Сохранить"
-        iconBtn="pi pi-check"
+        iconBtn="pi pi-save"
         classBtn="p-button-success"
         @click="savePage"
       />
@@ -58,18 +58,25 @@
   <hr />
   <br>
   <div class="p-d-flex p-flex-column">
-    <component
-      v-for="(itm, i) in dataPage.PageData"
+    <ElementViewWrapper
+       v-for="(itm, i) in dataPage.PageData"
       :key="itm"
       :index="i"
-      :is="itm.type + '-view_' + itm.style"
-      :data="itm.data"
+      :visible="itm.visible"
+      :qntElements="dataPage.PageData.length - 1"
       :bg="itm.bg"
       @up="upElement(i, i - 1)"
       @down="downElement(i, i + 1)"
-      @open-elementManager="editElementManagerOpen(i)"
-      @open-elementManagerBetween ="betweenElementManagerOpen(i)"
+      @delete="deleteElement(i)"
+      @hidden="hiddenElement(i)"
+      @openElementManager="editElementManagerOpen(i)"
+      @openElementManagerBetween ="betweenElementManagerOpen(i)"
+    >
+    <component
+      :is="itm.type + '-view_' + itm.style"
+      :data="itm.data"
     />
+    </ElementViewWrapper>
   </div>
   <div class="p-d-flex p-jc-center p-my-2">
     <Button
@@ -115,25 +122,31 @@
     </template>
   </Dialog>
   <Toast />
+  <ConfirmDialog />
 </template>
 
 <script>
+import ConfirmDialog from 'primevue/confirmdialog';
 import ColorPicker from "primevue/colorpicker";
-import Button from "primevue/button";
-import AppLoaderButton from "@/components/UI/AppLoaderButton"
-import Dialog from "primevue/dialog";
-import menuItems from "../db/uiElements";
 import PanelMenu from "primevue/panelmenu";
-import * as uiEditorComponents from "../db/uiEditorComponents";
-import * as uiViewComponents from "../db/uiViewComponents";
+import Button from "primevue/button";
+import Dialog from "primevue/dialog";
+import Toast from 'primevue/toast';
+import ElementViewWrapper from "@/components/Pages/UiElements/ElementViewWrapper"
+import AppLoaderButton from "@/components/UI/AppLoaderButton"
+import menuItems from "@/db/uiElements";
+import * as uiEditorComponents from "@/db/uiEditorComponents";
+import * as uiViewComponents from "@/db/uiViewComponents";
 import { reactive, ref, computed, onMounted } from "vue";
 import { useStore } from "vuex";
-import { useRouter, useRoute } from "vue-router";
+import { useRouter, useRoute, onBeforeRouteLeave } from "vue-router";
 import { useToast } from "primevue/usetoast";
-import Toast from 'primevue/toast';
+import { useConfirm } from "primevue/useconfirm";
 export default {
   components: {
+    ElementViewWrapper,
     AppLoaderButton,
+    ConfirmDialog,
     Button,
     Dialog,
     PanelMenu,
@@ -147,6 +160,7 @@ export default {
     const route = useRoute();
     const store = useStore();
     const toast = useToast()
+    const confirm = useConfirm()
     const dataPage = reactive(store.getters["pages/editablePage"]);
     const display = ref(false);
     const componentContent = ref(null);
@@ -163,7 +177,7 @@ export default {
       editIndex.value = i;
       modeMangerElement.value = "edit"
       router
-        .push({
+        .replace({
           query: {
             type: dataPage.PageData[i].type,
             style: dataPage.PageData[i].style,
@@ -189,6 +203,7 @@ export default {
         type: route.query.type,
         style: route.query.style,
         data: componentContent.value.getElementData(),
+        visible: true,
         bg: "#" + bgElement.value,
       };
       if (modeMangerElement.value === "new") {
@@ -257,10 +272,39 @@ export default {
         dataPage.PageData.splice(old_index, 1)[0]
       );
     }
+    function deleteElement(i) {
+      confirm.require({
+            message: 'Действительно удалить этот элемент?',
+            header: 'Подтвердите действие',
+            icon: 'pi pi-exclamation-triangle',
+            acceptLabel: 'Да',
+            rejectLabel: 'Нет',
+            accept: () => {
+                store.commit('pages/DELETE_ELEMENT', i)
+            },
+           
+        });
+      
+    }
+    function hiddenElement(i) {
+      store.commit("pages/CHANGE_VISIBLE_ELEMENT", i)
+    }
     const nameComponentContent = computed(
       () => route.query.type + "-content_" + route.query.style
     );
-
+    onBeforeRouteLeave((to, from, next) => {
+      if(!store.getters['pages/compare']) {
+        confirm.require({
+            message: 'Есть несохранённые данные, всё равно выйти?',
+            header: 'Подтвердите действие',
+            icon: 'pi pi-exclamation-triangle',
+            acceptLabel: 'Да',
+            rejectLabel: 'Нет',
+            accept: () =>  next(),
+            reject: () => next(false)
+        });
+      } else next()
+    })
     return {
       dataPage,
       addElementManagerOpen,
@@ -276,7 +320,9 @@ export default {
       downElement,
       editElementManagerOpen,
       betweenElementManagerOpen,
-      modeMangerElement
+      modeMangerElement,
+      deleteElement,
+      hiddenElement
     };
   },
 };

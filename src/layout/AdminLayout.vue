@@ -5,7 +5,7 @@
     </div>
     <div class="p-col-11 p-d-flex p-pr-3 p-pl-0 p-pt-0 layout__body">
       <div class="p-shadow-10 p-col-12 body__container">
-        <ScrollPanel style="width: 100%; height: 100%">
+        <ScrollPanel style="width: 100%; height: 100%" class="custombar">
           <router-view />
         </ScrollPanel>
       </div>
@@ -21,7 +21,24 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+::v-deep(.p-scrollpanel) {
+  &.custombar {
+    .p-scrollpanel-wrapper {
+      border-right: 9px solid var(--surface-b);
+    }
+
+    .p-scrollpanel-bar {
+      background-color: var(--primary-color);
+      opacity: 1;
+      transition: background-color 0.2s;
+
+      &:hover {
+        background-color: #007ad9;
+      }
+    }
+  }
+}
 .layout .layout__body {
   border-radius: 10px;
   height: 99vh;
