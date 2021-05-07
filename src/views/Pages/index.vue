@@ -12,19 +12,19 @@
       <Button label="Новая страница" icon="pi pi-plus" @click="createPage" />
     </div>
   </div>
-  <PageIndex :pages="pages" />
+  <PagesTable :pages="pages" />
 </template>
 
 <script>
 import { onMounted } from "vue";
 import { useStore } from "vuex";
 import { useRouter } from "vue-router";
-import PageIndex from "../components/Pages/PagesIndex";
+import PagesTable from "./components/PagesTable";
 import Button from "primevue/button";
 import InputText from "primevue/inputtext";
 import { computed } from "vue";
 export default {
-  components: { PageIndex, Button, InputText },
+  components: { PagesTable, Button, InputText },
   setup() {
     const store = useStore();
     const router = useRouter();
@@ -35,9 +35,9 @@ export default {
     const pages = computed(() => store.getters["pages/pages"]);
     function createPage() {
       store.commit("pages/SET_EDITABLE_PAGE", {
-        Title: "1",
-        PageData: [{ data: "213" }],
-        URL: "1",
+        Title: "",
+        PageData: [],
+        URL: "",
       });
       router.push("/pages/new");
     }

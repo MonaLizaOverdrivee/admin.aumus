@@ -1,6 +1,6 @@
 <template>
   <div class="menu">
-    <h2 class="p-m-0" style="color: white; text-align: center">Dashboard</h2>
+    <!-- <h2 class="p-m-0" style="color: white; text-align: center">Dashboard</h2> -->
     <Menu :model="items" />
   </div>
 </template>

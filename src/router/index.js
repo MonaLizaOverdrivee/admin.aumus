@@ -17,19 +17,19 @@ const routes = [
     path: "/pages",
     name: "Pages",
     component: () =>
-      import(/* webpackChunkName: "pages" */ "../views/Pages.vue"),
+      import(/* webpackChunkName: "pages" */ "../views/Pages/index.vue"),
   },
   {
     path: "/pages/:id",
     name: "PagesId",
     component: () =>
-      import(/* webpackChunkName: "pages" */ "../views/PageEditor.vue"),
+      import(/* webpackChunkName: "pages" */ "../views/PageEditor/index.vue"),
   },
   {
     path: "/pages/new",
     name: "PagesNew",
     component: () =>
-      import(/* webpackChunkName: "pages" */ "../views/PageEditor.vue"),
+      import(/* webpackChunkName: "pages" */ "../views/PageEditor/index.vue"),
   },
   {
     path: "/news",

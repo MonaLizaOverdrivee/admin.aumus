@@ -1,5 +1,5 @@
 <template>
-  <div class="p-grid layout">
+  <div class="p-grid p-mt-0 layout">
     <div class="p-p-0 p-col-1 layout__sidebar">
       <AppSidebarMenu />
     </div>
@@ -41,10 +41,15 @@ export default {
 }
 .layout .layout__body {
   border-radius: 10px;
-  height: 99vh;
+  // height: 99vh;
 }
 .body__container {
   border-radius: 10px;
   background-color: var(--surface-a);
+}
+.layout__sidebar {
+  align-self: self-start;
+  position: sticky;
+  top: 0;
 }
 </style>

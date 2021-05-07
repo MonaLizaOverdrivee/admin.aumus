@@ -1,22 +1,11 @@
 <template>
-  <div class="p-d-flex p-jc-between">
-    <h1 class="p-m-0">{{ dataPage.Title }} {{ $store.getters['pages/compare'] }}</h1>
-    <div>
-      <AppLoaderButton
-        label="Сохранить"
-        iconBtn="pi pi-save"
-        classBtn="p-button-success"
-        @click="savePage"
-      />
-      <Button
-        label="Выход"
-        icon="pi pi-times"
-        class="p-button-danger p-ml-2"
-        @click="$router.push('/pages')"
-      />
-    </div>
-  </div>
-  <div class="p-d-flex p-mt-3">
+  <EditorHeader 
+    v-model:title="dataPage.Title"
+    v-model:URL="dataPage.URL"
+    @save="savePage"
+    @exit="$router.push('/pages')"
+  />
+  <!-- <div class="p-d-flex p-mt-3">
     <div>
       <button
         style="
@@ -56,7 +45,7 @@
     <div></div>
   </div>
   <hr />
-  <br>
+  <br> -->
   <div class="p-d-flex p-flex-column">
     <ElementViewWrapper
        v-for="(itm, i) in dataPage.PageData"
@@ -121,22 +110,19 @@
       <Button label="Выбрать" icon="pi pi-check" @click="addElementToPage" />
     </template>
   </Dialog>
-  <Toast />
-  <ConfirmDialog />
 </template>
 
 <script>
-import ConfirmDialog from 'primevue/confirmdialog';
 import ColorPicker from "primevue/colorpicker";
 import PanelMenu from "primevue/panelmenu";
-import Button from "primevue/button";
 import Dialog from "primevue/dialog";
-import Toast from 'primevue/toast';
-import ElementViewWrapper from "@/components/Pages/UiElements/ElementViewWrapper"
+import Button from "primevue/button";
 import AppLoaderButton from "@/components/UI/AppLoaderButton"
-import menuItems from "@/db/uiElements";
-import * as uiEditorComponents from "@/db/uiEditorComponents";
-import * as uiViewComponents from "@/db/uiViewComponents";
+import ElementViewWrapper from "./components/ElementViewWrapper"
+import menuItems from "./components/Elements/elementsItemMenu";
+import EditorHeader from "./components/EditorHeader" 
+import * as EditorElements from "./components/Elements/importEditorElements";
+import * as ViewElements from "./components/Elements/importViewElements";
 import { reactive, ref, computed, onMounted } from "vue";
 import { useStore } from "vuex";
 import { useRouter, useRoute, onBeforeRouteLeave } from "vue-router";
@@ -144,16 +130,15 @@ import { useToast } from "primevue/usetoast";
 import { useConfirm } from "primevue/useconfirm";
 export default {
   components: {
+    EditorHeader,
     ElementViewWrapper,
     AppLoaderButton,
-    ConfirmDialog,
     Button,
     Dialog,
     PanelMenu,
     ColorPicker,
-    Toast,
-    ...uiEditorComponents,
-    ...uiViewComponents,
+    ...EditorElements,
+    ...ViewElements,
   },
   setup() {
     const router = useRouter();
@@ -168,6 +153,21 @@ export default {
     const menu = ref([]);
     const editIndex = ref(null);
     const modeMangerElement = ref("")
+    //editHeader
+    async function savePage() {
+      try {
+        if (route.fullPath === "/pages/new") {
+        await store.dispatch("pages/saveNewPage");
+      } else {
+        await store.dispatch("pages/saveEditablePage");
+      }
+      toast.add({severity:'success', summary: 'Успешно', detail: 'Страница сохранена', life: 3000})
+      } catch ({ status, statusText }) {
+        toast.add({severity:'error', summary: 'Ошибка!', detail: 'Код:' + status + ' ' + statusText, life: 3000})
+        console.log(status, statusText)
+      }
+    }
+    //ElementManager
     function addElementManagerOpen() {
       modeMangerElement.value = "new"
       display.value = true;
@@ -192,6 +192,13 @@ export default {
       modeMangerElement.value = "between"
       editIndex.value = i;
     }
+    //####################################################
+    onMounted(() => {
+      menu.value = getMenuItem();
+    });
+    const nameComponentContent = computed(
+      () => route.query.type + "-content_" + route.query.style
+    );
     function close() {
       display.value = false;
       editIndex.value = null;
@@ -222,22 +229,6 @@ export default {
       bgElement.value = "ffffff";
       close();
     }
-    async function savePage() {
-      try {
-        if (route.fullPath === "/pages/new") {
-        await store.dispatch("pages/saveNewPage");
-      } else {
-        await store.dispatch("pages/saveEditablePage");
-      }
-      toast.add({severity:'success', summary: 'Успешно', detail: 'Страница сохранена', life: 3000})
-      } catch ({ status, statusText }) {
-        toast.add({severity:'error', summary: 'Ошибка!', detail: 'Код:' + status + ' ' + statusText, life: 3000})
-        console.log(status, statusText)
-      }
-    }
-    onMounted(() => {
-      menu.value = getMenuItem();
-    });
     function getMenuItem() {
       const menuParse = menuItems.map((itm) => {
         const items = itm.items.map((subitm, index) => ({
@@ -258,6 +249,7 @@ export default {
       });
       return menuParse;
     }
+    //WrapperElement
     function upElement(old_index, new_index) {
       dataPage.PageData.splice(
         new_index,
@@ -289,9 +281,8 @@ export default {
     function hiddenElement(i) {
       store.commit("pages/CHANGE_VISIBLE_ELEMENT", i)
     }
-    const nameComponentContent = computed(
-      () => route.query.type + "-content_" + route.query.style
-    );
+
+
     onBeforeRouteLeave((to, from, next) => {
       if(!store.getters['pages/compare']) {
         confirm.require({
@@ -322,7 +313,7 @@ export default {
       betweenElementManagerOpen,
       modeMangerElement,
       deleteElement,
-      hiddenElement
+      hiddenElement,
     };
   },
 };
