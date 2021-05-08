@@ -1,4 +1,4 @@
-import { requestToDatabase } from "../../axios/request";
+import api from "@/api"
 import isEqual from "lodash/isEqual"
 import cloneDeep  from "lodash/cloneDeep"
 
@@ -48,17 +48,24 @@ export default {
   },
   actions: {
     async loadPagesCount({ commit }) {
-      const { data } = await requestToDatabase.get("pages/count");
+      const { data } = await api.pages.pagesCount();
       commit("SET_PAGES_COUNT", data);
     },
     async loadPages({ commit }) {
-      const { data } = await requestToDatabase.get("pages");
-      commit("SET_PAGES_LIST", data);
+      try {
+        const { data } = await api.pages.allPages();
+        const { data: loginData } = await api.auth.logIn('art', 'Q123456e')
+        console.log(loginData)
+        commit("SET_PAGES_LIST", data);
+      } catch (error) {
+        console.log(error.response)
+      }
+     
     },
     async saveEditablePage({ state, commit }) {
       try {
         commit("loading/TOGGLE_LOADING_BUTTON", true, { root: true })
-        const { data } = await requestToDatabase.put(`pages/${state.editablePage.id}`, state.editablePage);
+        const { data } = await api.pages.changePage(state.editablePage.id, state.editablePage);
         console.log(data)
         commit('SET_EDITABLE_PAGE', data)
         commit("loading/TOGGLE_LOADING_BUTTON", false, { root: true })
@@ -71,7 +78,8 @@ export default {
     async saveNewPage({ state, commit }) {
       try {
         commit("loading/TOGGLE_LOADING_BUTTON", true, { root: true })
-        await requestToDatabase.post("pages", state.editablePage);
+        const { data } = await api.pages.createPage(state.editablePage);
+        commit('SET_EDITABLE_PAGE', data)
         commit("loading/TOGGLE_LOADING_BUTTON", false, { root: true })
         
       } catch (error) {
