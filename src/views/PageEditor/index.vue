@@ -5,6 +5,12 @@
     @save="savePage"
     @exit="$router.push('/pages')"
   />
+  <!-- {{ $store.getters["auth/editor"] }} -->
+  role: {{ role }} <br>
+  change: {{ $ability.can('change', role) }} <br> 
+  create: {{ $ability.can('create', role) }} <br>
+  access: {{ $ability.can('access', '/pages') }} <br>
+  route: {{ $route.params.id }}
   <!-- <div class="p-d-flex p-mt-3">
     <div>
       <button
@@ -51,6 +57,7 @@
        v-for="(itm, i) in dataPage.PageData"
       :key="itm"
       :index="i"
+      :role="role"
       :visible="itm.visible"
       :qntElements="dataPage.PageData.length - 1"
       :bg="itm.bg"
@@ -67,7 +74,7 @@
     />
     </ElementViewWrapper>
   </div>
-  <div class="p-d-flex p-jc-center p-my-2">
+  <div class="p-d-flex p-jc-center p-my-2" v-if="$ability.can('create', role)">
     <Button
       icon="pi pi-plus"
       class="p-button-rounded p-button-outlined p-button-lg"
@@ -84,7 +91,7 @@
     :modal="true"
   >
     <div class="p-grid">
-      <div class="p-col-3 menu_side p-p-0"><PanelMenu :model="menu" /></div>
+      <div class="p-col-3 menu_side p-p-0" v-if="$ability.can('create', role)"><PanelMenu :model="menu" /></div>
       <div class="p-col content_side">
         <keep-alive v-if="$route.query.type">
           <component :is="nameComponentContent" ref="componentContent">
@@ -141,9 +148,11 @@ export default {
     ...ViewElements,
   },
   setup() {
+    
     const router = useRouter();
     const route = useRoute();
     const store = useStore();
+    const role = computed(() =>  store.getters["auth/userAccess"].pages[route.params.id])
     const toast = useToast()
     const confirm = useConfirm()
     const dataPage = reactive(store.getters["pages/editablePage"]);
@@ -153,6 +162,7 @@ export default {
     const menu = ref([]);
     const editIndex = ref(null);
     const modeMangerElement = ref("")
+
     //editHeader
     async function savePage() {
       try {
@@ -314,6 +324,7 @@ export default {
       modeMangerElement,
       deleteElement,
       hiddenElement,
+      role
     };
   },
 };

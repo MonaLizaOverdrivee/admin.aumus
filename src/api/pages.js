@@ -2,9 +2,6 @@ export default axios => ({
   allPages() {
     return axios.get("pages")
   },
-  allAccessPage() {
-    return axios.get(`pages`)
-  },
   pagesCount() {
     return axios.get("pages/count")
   },
@@ -14,9 +11,9 @@ export default axios => ({
   createPage(newPage) {
     return axios.post("pages", newPage)
   },
-  addEditors(users, pageId) {
-    return axios.put(`pages/${pageId}`, {
-      editors: users,
-    })
+  // $$$$$$$$$ not use $$$$$$$$$$$
+  searchPage(query) {
+    const queryParam = encodeURI(query)
+    return axios.get(`pages?Title_contains=${queryParam}`)
   }
 }) 

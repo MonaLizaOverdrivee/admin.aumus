@@ -5,7 +5,7 @@
     <div>
       <span class="p-input-icon-left">
         <i class="pi pi-search" />
-        <InputText type="text" placeholder="Поиск" />
+        <InputText type="text" placeholder="Поиск" v-model="search"/>
       </span>
     </div>
     <div>
@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import { onMounted } from "vue";
+import { onMounted, ref } from "vue";
 import { useStore } from "vuex";
 import { useRouter } from "vue-router";
 import PagesTable from "./components/PagesTable";
@@ -28,6 +28,7 @@ export default {
   setup() {
     const store = useStore();
     const router = useRouter();
+    const search = ref("")
     onMounted(() => {
       store.dispatch("pages/loadPagesCount");
       store.dispatch("pages/loadPages");
@@ -44,6 +45,7 @@ export default {
     return {
       pages,
       createPage,
+      search
     };
   },
 };

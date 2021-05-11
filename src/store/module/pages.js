@@ -55,12 +55,22 @@ export default {
       try {
         const { data } = await api.pages.allPages();
         const { data: loginData } = await api.auth.logIn('art', 'Q123456e')
+        const { data: searchData } = await api.pages.searchPage("При")
         console.log(loginData)
+        console.log('search', searchData)
         commit("SET_PAGES_LIST", data);
       } catch (error) {
         console.log(error.response)
       }
-     
+    },
+    async loadSearchPage(query, { commit }) {
+      try {
+        const { data } = await api.pages.searchPage(query)
+        commit("SET_PAGES_LIST", data);
+        console.log(data)
+      } catch (error) {
+        console.log(error)
+      }
     },
     async saveEditablePage({ state, commit }) {
       try {

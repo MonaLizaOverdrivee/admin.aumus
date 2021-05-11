@@ -9,11 +9,14 @@
 import Menu from "primevue/menu";
 import { useRoute } from "vue-router";
 import { ref, computed } from "vue";
+// import { useAbility } from '@casl/vue';
+import ability from "@/utils/permissions"
 
 export default {
   components: { Menu },
   setup() {
     const route = useRoute();
+    // const { can } = useAbility()
     const items = ref([
       {
         label: "Меню",
@@ -26,6 +29,7 @@ export default {
         icon: "pi pi-file",
         to: "/pages",
         class: computed(() => (route.path.includes("/pages") ? "active" : "")),
+        visible: () => ability.can('access', '/pages')
       },
       {
         label: "Новости",
@@ -60,6 +64,7 @@ export default {
     ]);
     return {
       items,
+      ability
     };
   },
 };

@@ -10,6 +10,8 @@ import PrimeVue from "primevue/config";
 import "./assets/theme.css";
 import ConfirmationService from "primevue/confirmationservice";
 import ToastService from 'primevue/toastservice';
+import { abilitiesPlugin } from '@casl/vue';
+import ability from "./utils/permissions"
 
 createApp(App)
   .use(store)
@@ -17,4 +19,7 @@ createApp(App)
   .use(PrimeVue)
   .use(ConfirmationService)
   .use(ToastService)
+  .use(abilitiesPlugin, ability, {
+    useGlobalProperties: true
+  })
   .mount("#app");
