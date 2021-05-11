@@ -20,7 +20,7 @@ export default {
   setup() {
     const dataElement = ref("");
     function getElementData() {
-      if(dataElement.value.indexOf("<p>")  === -1) return dataElement.value;
+      if (dataElement.value.indexOf("<p>") === -1) return dataElement.value;
       let newString = "";
       let start = 0;
       while (start < dataElement.value.length) {

@@ -1,5 +1,5 @@
 <template>
-    <p v-html="data" class="p-my-2"></p>
+  <p v-html="data" class="p-my-2"></p>
 </template>
 <script>
 export default {

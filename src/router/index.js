@@ -8,6 +8,14 @@ const routes = [
     component: () => import(/* webpackChunkName: "home" */ "../views/Home.vue"),
   },
   {
+    path: "/auth",
+    name: "Auth",
+    component: () => import(/* webpackChunkName: "auth" */ "../views/Auth/index.vue"),
+    meta: {
+      layout: 'auth'
+    }
+  },
+  {
     path: "/menu",
     name: "Menu",
     component: () =>

@@ -1,6 +1,6 @@
-import api from "@/api"
-import isEqual from "lodash/isEqual"
-import cloneDeep  from "lodash/cloneDeep"
+import api from "@/api";
+import isEqual from "lodash/isEqual";
+import cloneDeep from "lodash/cloneDeep";
 
 export default {
   namespaced: true,
@@ -9,7 +9,7 @@ export default {
       pagesCount: null,
       pages: [],
       editablePage: {},
-      startEditablePage: {}
+      startEditablePage: {},
     };
   },
   getters: {
@@ -17,7 +17,8 @@ export default {
     pages: ({ pages }) => pages,
     editablePage: ({ editablePage }) => editablePage,
     qntElements: ({ editablePage }) => editablePage.PageData.length,
-    compare: ({ editablePage,  startEditablePage}) => isEqual(editablePage,  startEditablePage)
+    compare: ({ editablePage, startEditablePage }) =>
+      isEqual(editablePage, startEditablePage),
   },
   mutations: {
     SET_PAGES_COUNT(state, payload) {
@@ -33,18 +34,19 @@ export default {
       state.editablePage.PageData.splice(element.i, 0, element.data);
     },
     DELETE_ELEMENT(state, index) {
-      state.editablePage.PageData.splice(index, 1)
+      state.editablePage.PageData.splice(index, 1);
     },
     SET_EDITABLE_PAGE(state, page) {
       state.editablePage = page;
-      state.startEditablePage = cloneDeep(page)
+      state.startEditablePage = cloneDeep(page);
     },
     SET_PAGE_DATA_EDIT_ELEMENT(state, payload) {
-      state.editablePage.PageData[payload.i] = payload.element
+      state.editablePage.PageData[payload.i] = payload.element;
     },
     CHANGE_VISIBLE_ELEMENT(state, index) {
-      state.editablePage.PageData[index].visible = !state.editablePage.PageData[index].visible
-    }
+      state.editablePage.PageData[index].visible = !state.editablePage.PageData[index]
+        .visible;
+    },
   },
   actions: {
     async loadPagesCount({ commit }) {
@@ -54,47 +56,93 @@ export default {
     async loadPages({ commit }) {
       try {
         const { data } = await api.pages.allPages();
-        const { data: loginData } = await api.auth.logIn('art', 'Q123456e')
-        const { data: searchData } = await api.pages.searchPage("При")
-        console.log(loginData)
-        console.log('search', searchData)
+        const { data: loginData } = await api.auth.logIn("art", "Q123456e");
+        console.log(loginData);
         commit("SET_PAGES_LIST", data);
-      } catch (error) {
-        console.log(error.response)
+      } catch ({ response }) {
+        commit(
+          "notification/SET_NOTIFY",
+          {
+            severity: "error",
+            summary: "Ошибка!",
+            detail:
+              response.status +
+              " " +
+              response.statusText +
+              " Не удалось загрузить страницы",
+          },
+          { root: true }
+        );
       }
     },
     async loadSearchPage(query, { commit }) {
       try {
-        const { data } = await api.pages.searchPage(query)
+        const { data } = await api.pages.searchPage(query);
         commit("SET_PAGES_LIST", data);
-        console.log(data)
+        console.log(data);
       } catch (error) {
-        console.log(error)
+        console.log(error);
       }
     },
     async saveEditablePage({ state, commit }) {
       try {
-        commit("loading/TOGGLE_LOADING_BUTTON", true, { root: true })
-        const { data } = await api.pages.changePage(state.editablePage.id, state.editablePage);
-        console.log(data)
-        commit('SET_EDITABLE_PAGE', data)
-        commit("loading/TOGGLE_LOADING_BUTTON", false, { root: true })
-      } catch (error) {
-        commit("loading/TOGGLE_LOADING_BUTTON", false, { root: true })
-        console.log(error)
-        return Promise.reject(error.response)
+        commit("loading/TOGGLE_LOADING_BUTTON", true, { root: true });
+        const { data } = await api.pages.changePage(
+          state.editablePage.id,
+          state.editablePage
+        );
+        console.log(data);
+        commit("SET_EDITABLE_PAGE", data);
+        commit("loading/TOGGLE_LOADING_BUTTON", false, { root: true });
+
+        commit(
+          "notification/SET_NOTIFY",
+          {
+            severity: "success",
+            summary: "Успешно!",
+            detail: "Страница сохранена",
+          },
+          { root: true }
+        );
+      } catch ({ response }) {
+        commit("loading/TOGGLE_LOADING_BUTTON", false, { root: true });
+        commit(
+          "notification/SET_NOTIFY",
+          {
+            severity: "error",
+            summary: "Ошибка!",
+            detail: response.status + " " + response.statusText,
+          },
+          { root: true }
+        );
       }
     },
     async saveNewPage({ state, commit }) {
       try {
-        commit("loading/TOGGLE_LOADING_BUTTON", true, { root: true })
+        commit("loading/TOGGLE_LOADING_BUTTON", true, { root: true });
         const { data } = await api.pages.createPage(state.editablePage);
-        commit('SET_EDITABLE_PAGE', data)
-        commit("loading/TOGGLE_LOADING_BUTTON", false, { root: true })
-        
-      } catch (error) {
-        commit("loading/TOGGLE_LOADING_BUTTON", false, { root: true })
-        return Promise.reject(error.response)
+        commit("SET_EDITABLE_PAGE", data);
+        commit("loading/TOGGLE_LOADING_BUTTON", false, { root: true });
+        commit(
+          "notification/SET_NOTIFY",
+          {
+            severity: "success",
+            summary: "Успешно!",
+            detail: "Страница сохранена",
+          },
+          { root: true }
+        );
+      } catch ({ response }) {
+        commit("loading/TOGGLE_LOADING_BUTTON", false, { root: true });
+        commit(
+          "notification/SET_NOTIFY",
+          {
+            severity: "error",
+            summary: "Ошибка!",
+            detail: response.status + " " + response.statusText,
+          },
+          { root: true }
+        );
       }
     },
   },

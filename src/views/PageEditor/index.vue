@@ -1,15 +1,15 @@
 <template>
-  <EditorHeader 
+  <EditorHeader
     v-model:title="dataPage.Title"
     v-model:URL="dataPage.URL"
     @save="savePage"
     @exit="$router.push('/pages')"
   />
   <!-- {{ $store.getters["auth/editor"] }} -->
-  role: {{ role }} <br>
-  change: {{ $ability.can('change', role) }} <br> 
-  create: {{ $ability.can('create', role) }} <br>
-  access: {{ $ability.can('access', '/pages') }} <br>
+  role: {{ role }} <br />
+  change: {{ $ability.can("change", role) }} <br />
+  create: {{ $ability.can("create", role) }} <br />
+  access: {{ $ability.can("access", "/pages") }} <br />
   route: {{ $route.params.id }}
   <!-- <div class="p-d-flex p-mt-3">
     <div>
@@ -54,7 +54,7 @@
   <br> -->
   <div class="p-d-flex p-flex-column">
     <ElementViewWrapper
-       v-for="(itm, i) in dataPage.PageData"
+      v-for="(itm, i) in dataPage.PageData"
       :key="itm"
       :index="i"
       :role="role"
@@ -66,12 +66,9 @@
       @delete="deleteElement(i)"
       @hidden="hiddenElement(i)"
       @openElementManager="editElementManagerOpen(i)"
-      @openElementManagerBetween ="betweenElementManagerOpen(i)"
+      @openElementManagerBetween="betweenElementManagerOpen(i)"
     >
-    <component
-      :is="itm.type + '-view_' + itm.style"
-      :data="itm.data"
-    />
+      <component :is="itm.type + '-view_' + itm.style" :data="itm.data" />
     </ElementViewWrapper>
   </div>
   <div class="p-d-flex p-jc-center p-my-2" v-if="$ability.can('create', role)">
@@ -91,7 +88,9 @@
     :modal="true"
   >
     <div class="p-grid">
-      <div class="p-col-3 menu_side p-p-0" v-if="$ability.can('create', role)"><PanelMenu :model="menu" /></div>
+      <div class="p-col-3 menu_side p-p-0" v-if="$ability.can('create', role)">
+        <PanelMenu :model="menu" />
+      </div>
       <div class="p-col content_side">
         <keep-alive v-if="$route.query.type">
           <component :is="nameComponentContent" ref="componentContent">
@@ -108,12 +107,7 @@
       </div>
     </div>
     <template #footer>
-      <Button
-        label="Отмена"
-        icon="pi pi-times"
-        @click="close"
-        class="p-button-text"
-      />
+      <Button label="Отмена" icon="pi pi-times" @click="close" class="p-button-text" />
       <Button label="Выбрать" icon="pi pi-check" @click="addElementToPage" />
     </template>
   </Dialog>
@@ -124,16 +118,15 @@ import ColorPicker from "primevue/colorpicker";
 import PanelMenu from "primevue/panelmenu";
 import Dialog from "primevue/dialog";
 import Button from "primevue/button";
-import AppLoaderButton from "@/components/UI/AppLoaderButton"
-import ElementViewWrapper from "./components/ElementViewWrapper"
+import AppLoaderButton from "@/components/UI/AppLoaderButton";
+import ElementViewWrapper from "./components/ElementViewWrapper";
 import menuItems from "./components/Elements/elementsItemMenu";
-import EditorHeader from "./components/EditorHeader" 
+import EditorHeader from "./components/EditorHeader";
 import * as EditorElements from "./components/Elements/importEditorElements";
 import * as ViewElements from "./components/Elements/importViewElements";
 import { reactive, ref, computed, onMounted } from "vue";
 import { useStore } from "vuex";
 import { useRouter, useRoute, onBeforeRouteLeave } from "vue-router";
-import { useToast } from "primevue/usetoast";
 import { useConfirm } from "primevue/useconfirm";
 export default {
   components: {
@@ -148,44 +141,36 @@ export default {
     ...ViewElements,
   },
   setup() {
-    
     const router = useRouter();
     const route = useRoute();
     const store = useStore();
-    const role = computed(() =>  store.getters["auth/userAccess"].pages[route.params.id])
-    const toast = useToast()
-    const confirm = useConfirm()
+    const role = computed(() => store.getters["auth/userAccess"].pages[route.params.id]);
+    const confirm = useConfirm();
     const dataPage = reactive(store.getters["pages/editablePage"]);
     const display = ref(false);
     const componentContent = ref(null);
     const bgElement = ref("ffffff");
     const menu = ref([]);
     const editIndex = ref(null);
-    const modeMangerElement = ref("")
+    const modeMangerElement = ref("");
 
     //editHeader
     async function savePage() {
-      try {
-        if (route.fullPath === "/pages/new") {
+      if (route.fullPath === "/pages/new") {
         await store.dispatch("pages/saveNewPage");
       } else {
         await store.dispatch("pages/saveEditablePage");
       }
-      toast.add({severity:'success', summary: 'Успешно', detail: 'Страница сохранена', life: 3000})
-      } catch ({ status, statusText }) {
-        toast.add({severity:'error', summary: 'Ошибка!', detail: 'Код:' + status + ' ' + statusText, life: 3000})
-        console.log(status, statusText)
-      }
     }
     //ElementManager
     function addElementManagerOpen() {
-      modeMangerElement.value = "new"
+      modeMangerElement.value = "new";
       display.value = true;
     }
     function editElementManagerOpen(i) {
       display.value = true;
       editIndex.value = i;
-      modeMangerElement.value = "edit"
+      modeMangerElement.value = "edit";
       router
         .replace({
           query: {
@@ -193,13 +178,11 @@ export default {
             style: dataPage.PageData[i].style,
           },
         })
-        .then(
-          () => (componentContent.value.dataElement = dataPage.PageData[i].data)
-        );
+        .then(() => (componentContent.value.dataElement = dataPage.PageData[i].data));
     }
     function betweenElementManagerOpen(i) {
       display.value = true;
-      modeMangerElement.value = "between"
+      modeMangerElement.value = "between";
       editIndex.value = i;
     }
     //####################################################
@@ -212,7 +195,7 @@ export default {
     function close() {
       display.value = false;
       editIndex.value = null;
-      modeMangerElement.value = ""
+      modeMangerElement.value = "";
       router.push({ query: {} });
     }
     function addElementToPage() {
@@ -225,7 +208,7 @@ export default {
       };
       if (modeMangerElement.value === "new") {
         store.commit("pages/SET_PAGE_DATA_ELEMENT", element);
-      } else if(modeMangerElement.value === "edit"){
+      } else if (modeMangerElement.value === "edit") {
         store.commit("pages/SET_PAGE_DATA_EDIT_ELEMENT", {
           element,
           i: editIndex.value,
@@ -234,7 +217,7 @@ export default {
         store.commit("pages/SET_PAGE_DATA_ELEMENT_BETWEEN", {
           data: element,
           i: editIndex.value,
-        })
+        });
       }
       bgElement.value = "ffffff";
       close();
@@ -245,8 +228,7 @@ export default {
           label: subitm.label,
           to: `?type=${itm.type}&style=${index + 1}`,
           style: computed(() =>
-            route.query.type === itm.type &&
-            route.query.style === `${index + 1}`
+            route.query.type === itm.type && route.query.style === `${index + 1}`
               ? "background-color: var(--surface-c)"
               : ""
           ),
@@ -261,51 +243,40 @@ export default {
     }
     //WrapperElement
     function upElement(old_index, new_index) {
-      dataPage.PageData.splice(
-        new_index,
-        0,
-        dataPage.PageData.splice(old_index, 1)[0]
-      );
+      dataPage.PageData.splice(new_index, 0, dataPage.PageData.splice(old_index, 1)[0]);
     }
     function downElement(old_index, new_index) {
-      dataPage.PageData.splice(
-        new_index,
-        0,
-        dataPage.PageData.splice(old_index, 1)[0]
-      );
+      dataPage.PageData.splice(new_index, 0, dataPage.PageData.splice(old_index, 1)[0]);
     }
     function deleteElement(i) {
       confirm.require({
-            message: 'Действительно удалить этот элемент?',
-            header: 'Подтвердите действие',
-            icon: 'pi pi-exclamation-triangle',
-            acceptLabel: 'Да',
-            rejectLabel: 'Нет',
-            accept: () => {
-                store.commit('pages/DELETE_ELEMENT', i)
-            },
-           
-        });
-      
+        message: "Действительно удалить этот элемент?",
+        header: "Подтвердите действие",
+        icon: "pi pi-exclamation-triangle",
+        acceptLabel: "Да",
+        rejectLabel: "Нет",
+        accept: () => {
+          store.commit("pages/DELETE_ELEMENT", i);
+        },
+      });
     }
     function hiddenElement(i) {
-      store.commit("pages/CHANGE_VISIBLE_ELEMENT", i)
+      store.commit("pages/CHANGE_VISIBLE_ELEMENT", i);
     }
 
-
     onBeforeRouteLeave((to, from, next) => {
-      if(!store.getters['pages/compare']) {
+      if (!store.getters["pages/compare"]) {
         confirm.require({
-            message: 'Есть несохранённые данные, всё равно выйти?',
-            header: 'Подтвердите действие',
-            icon: 'pi pi-exclamation-triangle',
-            acceptLabel: 'Да',
-            rejectLabel: 'Нет',
-            accept: () =>  next(),
-            reject: () => next(false)
+          message: "Есть несохранённые данные, всё равно выйти?",
+          header: "Подтвердите действие",
+          icon: "pi pi-exclamation-triangle",
+          acceptLabel: "Да",
+          rejectLabel: "Нет",
+          accept: () => next(),
+          reject: () => next(false),
         });
-      } else next()
-    })
+      } else next();
+    });
     return {
       dataPage,
       addElementManagerOpen,
@@ -324,7 +295,7 @@ export default {
       modeMangerElement,
       deleteElement,
       hiddenElement,
-      role
+      role,
     };
   },
 };

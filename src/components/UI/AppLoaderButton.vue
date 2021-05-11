@@ -1,5 +1,5 @@
 <template>
-  <Button :label="text"  :icon="icon" :class="classBtn"/>
+  <Button :label="text" :icon="icon" :class="classBtn" />
 </template>
 
 <script>
@@ -15,21 +15,20 @@ export default {
       type: String,
     },
     iconBtn: {
-      type: String
-    }
+      type: String,
+    },
   },
   computed: {
     icon() {
-      return this.$store.getters["loading/loadingButton"] ? "pi pi-spin pi-spinner" : this.iconBtn
+      return this.$store.getters["loading/loadingButton"]
+        ? "pi pi-spin pi-spinner"
+        : this.iconBtn;
     },
     text() {
-      return this.label
-    }
-  }
-
-}
+      return this.label;
+    },
+  },
+};
 </script>
 
-<style>
-
-</style>
+<style></style>

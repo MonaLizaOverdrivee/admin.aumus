@@ -3,14 +3,14 @@ export default {
   state() {
     return {
       loadingButton: false,
-    }
+    };
   },
   getters: {
-    loadingButton: ({ loadingButton}) => loadingButton
+    loadingButton: ({ loadingButton }) => loadingButton,
   },
   mutations: {
     TOGGLE_LOADING_BUTTON(state, bool) {
-      state.loadingButton = bool
-    }
-  }
-}
+      state.loadingButton = bool;
+    },
+  },
+};

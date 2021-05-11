@@ -1,20 +1,57 @@
 <template>
-  <div :style="'background-color: ' + bg" class="wrapper__container" @mouseover="doVisibleOptionBar" @mouseleave="doInvisbleOptionsBar">
+  <div
+    :style="'background-color: ' + bg"
+    class="wrapper__container"
+    @mouseover="doVisibleOptionBar"
+    @mouseleave="doInvisbleOptionsBar"
+  >
     <div class="option__bar" v-if="displayOptionBar">
       <div class="p-grid">
         <div class="p-col"></div>
         <div class="p-col p-d-flex p-jc-center add_button">
-          <Button icon="pi pi-plus" class="p-button-rounded p-button-sm" @click="$emit('openElementManagerBetween')" v-if="$ability.can('create', role)"/>
+          <Button
+            icon="pi pi-plus"
+            class="p-button-rounded p-button-sm"
+            @click="$emit('openElementManagerBetween')"
+            v-if="$ability.can('create', role)"
+          />
         </div>
         <div class="p-col p-d-flex p-jc-end">
-          <span class="p-buttonset" :class="{'p-mr-2': $ability.can('create', role)}">
-            <Button label="Контент" class="p-button-sm" @click="$emit('openElementManager')"/>
-            <Button icon="pi pi-trash" class="p-button-sm" @click="$emit('delete')"  v-if="$ability.can('create', role)"/>
-            <Button icon="pi pi-power-off" class="p-button-sm" @click="$emit('hidden')"  v-if="$ability.can('create', role)"/>
+          <span
+            class="p-buttonset"
+            :class="{ 'p-mr-2': $ability.can('create', role) }"
+          >
+            <Button
+              label="Контент"
+              class="p-button-sm"
+              @click="$emit('openElementManager')"
+            />
+            <Button
+              icon="pi pi-trash"
+              class="p-button-sm"
+              @click="$emit('delete')"
+              v-if="$ability.can('create', role)"
+            />
+            <Button
+              icon="pi pi-power-off"
+              class="p-button-sm"
+              @click="$emit('hidden')"
+              v-if="$ability.can('create', role)"
+            />
           </span>
           <span class="p-buttonset" v-if="$ability.can('create', role)">
-            <Button icon="pi pi-arrow-down" class="p-button-sm " @click="$emit('down')" :disabled="lastElement"/>
-            <Button icon="pi pi-arrow-up" class="p-button-sm " @click="$emit('up')" :disabled="firstElement"/>
+            <Button
+              icon="pi pi-arrow-down"
+              class="p-button-sm"
+              @click="$emit('down')"
+              :disabled="lastElement"
+            />
+            <Button
+              icon="pi pi-arrow-up"
+              class="p-button-sm"
+              @click="$emit('up')"
+              :disabled="firstElement"
+            />
           </span>
         </div>
       </div>
@@ -22,20 +59,29 @@
     <div class="container" v-if="visible">
       <slot />
     </div>
-      <div class="p-py-5 p-d-flex p-jc-center hidden_element" v-else>
-        <div class="p-as-end p-mr-2"><span class="pi pi-eye-slash hidden_element__icon"></span></div>
-        <div><span class="hidden_element__icon">элемент скрыт</span></div>
+    <div class="p-py-5 p-d-flex p-jc-center hidden_element" v-else>
+      <div class="p-as-end p-mr-2">
+        <span class="pi pi-eye-slash hidden_element__icon"></span>
       </div>
+      <div><span class="hidden_element__icon">элемент скрыт</span></div>
+    </div>
   </div>
 </template>
 <script>
 import Button from "primevue/button";
 export default {
   components: { Button },
-  emits: ['up', 'down', 'openElementManager', 'openElementManagerBetween', 'delete', 'hidden'],
+  emits: [
+    "up",
+    "down",
+    "openElementManager",
+    "openElementManagerBetween",
+    "delete",
+    "hidden",
+  ],
   props: {
     role: {
-      type: String
+      type: String,
     },
     bg: {
       type: String,
@@ -43,7 +89,7 @@ export default {
     },
     index: {
       type: Number,
-      required: true
+      required: true,
     },
     visible: {
       type: Boolean,
@@ -52,29 +98,29 @@ export default {
     qntElements: {
       type: Number,
       required: true,
-    }
+    },
   },
   data() {
     return {
       displayOptionBar: false,
-    }
+    };
   },
   computed: {
     firstElement() {
-      return this.index === 0
+      return this.index === 0;
     },
     lastElement() {
-      return this.index === this.qntElements
-    }
+      return this.index === this.qntElements;
+    },
   },
   methods: {
     doVisibleOptionBar() {
-      this.displayOptionBar = true
+      this.displayOptionBar = true;
     },
     doInvisbleOptionsBar() {
-      this.displayOptionBar = false
+      this.displayOptionBar = false;
     },
-  }
+  },
 };
 </script>
 

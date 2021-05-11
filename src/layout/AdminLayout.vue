@@ -1,13 +1,19 @@
 <template>
-  <div class="p-grid p-mt-0 layout">
-    <div class="p-p-0 p-col-1 layout__sidebar">
-      <AppSidebarMenu />
-    </div>
-    <div class="p-col-11 p-d-flex p-pr-3 p-pl-0 p-pt-0 layout__body" style="height: 850px">
-      <div class="p-shadow-10 p-col-12 body__container">
-        <ScrollPanel style="width: 100%; height: 100%" class="custombar">
-          <router-view />
-        </ScrollPanel>
+  <div class="p-d-flex p-flex-column" style="height: 100vh">
+    <AppHeader />
+    <div class="p-grid p-mt-0 layout">
+      <div class="p-p-0 p-col-1 layout__sidebar">
+        <AppSidebarMenu />
+      </div>
+      <div
+        class="p-col-11 p-d-flex p-pr-3 p-pl-0 p-pt-0 layout__body"
+        style="height: 850px"
+      >
+        <div class="p-shadow-10 p-col-12 body__container">
+          <ScrollPanel style="width: 100%; height: 100%" class="custombar">
+            <router-view />
+          </ScrollPanel>
+        </div>
       </div>
     </div>
   </div>
@@ -15,9 +21,10 @@
 
 <script>
 import AppSidebarMenu from "../components/SideBar/AppSidebarMenu";
+import AppHeader from "@/components/Header/AppHeader"
 import ScrollPanel from "primevue/scrollpanel";
 export default {
-  components: { AppSidebarMenu, ScrollPanel },
+  components: { AppSidebarMenu, AppHeader, ScrollPanel },
 };
 </script>
 

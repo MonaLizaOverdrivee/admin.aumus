@@ -11,7 +11,11 @@
       <div class="p-col-3 menu_side p-p-0"><PanelMenu :model="menu" /></div>
       <div class="p-col content_side">
         <keep-alive v-if="$route.query.type">
-          <component :is="nameComponentContent" :dataElement="data" @output-data="setDataElement">
+          <component
+            :is="nameComponentContent"
+            :dataElement="data"
+            @output-data="setDataElement"
+          >
             <strong>Цвета блока: </strong><ColorPicker v-model="bgElement" />
           </component>
         </keep-alive>
@@ -37,36 +41,32 @@
 </template>
 
 <script>
-import { reactive, ref } from "vue"
+import { reactive, ref } from "vue";
 export default {
-  emits: ['close', 'accept'],
+  emits: ["close", "accept"],
   props: {
     dataElement: {
       type: Object,
       default: null,
-    }
+    },
   },
   setup() {
-    const bgElement = ref('')
+    const bgElement = ref("");
     const element = reactive({
-      type: route.query.type,
-      style: route.query.style,
+      // type: route.query.type,
+      // style: route.query.style,
       data: null,
       visible: true,
       bg: "#" + bgElement.value,
-    })
-    function setDataElement(newData){
-      element.data = newData
+    });
+    function setDataElement(newData) {
+      element.data = newData;
     }
     return {
-      dataElement: element.data,
-      setDataElement
-    }
-  }
-
-}
+      setDataElement,
+    };
+  },
+};
 </script>
 
-<style>
-
-</style>
+<style></style>

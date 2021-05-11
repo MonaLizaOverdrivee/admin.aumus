@@ -5,7 +5,7 @@
     <div>
       <span class="p-input-icon-left">
         <i class="pi pi-search" />
-        <InputText type="text" placeholder="Поиск" v-model="search"/>
+        <InputText type="text" placeholder="Поиск" v-model="search" />
       </span>
     </div>
     <div>
@@ -28,10 +28,11 @@ export default {
   setup() {
     const store = useStore();
     const router = useRouter();
-    const search = ref("")
+    const search = ref("");
     onMounted(() => {
       store.dispatch("pages/loadPagesCount");
       store.dispatch("pages/loadPages");
+      store.dispatch("auth/login")
     });
     const pages = computed(() => store.getters["pages/pages"]);
     function createPage() {
@@ -45,7 +46,7 @@ export default {
     return {
       pages,
       createPage,
-      search
+      search,
     };
   },
 };

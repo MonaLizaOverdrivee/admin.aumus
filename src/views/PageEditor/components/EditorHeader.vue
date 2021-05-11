@@ -27,7 +27,14 @@
   <div class="p-mt-2 p-d-flex p-mb-4">
     <div class="p-mr-2"><strong>Адрес: </strong></div>
     <div class="url__wrapper">
-    <span class="url__domain">https://aumsu.ru</span><input type="text" class="url__input" placeholder="" :value="URL" @input="$emit('update:URL', $event.target.value)"/>
+      <span class="url__domain">https://aumsu.ru</span
+      ><input
+        type="text"
+        class="url__input"
+        placeholder=""
+        :value="URL"
+        @input="$emit('update:URL', $event.target.value)"
+      />
     </div>
   </div>
 </template>
@@ -54,7 +61,7 @@ export default {
 
 <style lang="scss" scoped>
 .url__wrapper {
-  border-bottom: 1px solid gray
+  border-bottom: 1px solid gray;
 }
 .url__domain {
   color: var(--text-color-secondary);
@@ -68,7 +75,7 @@ export default {
   font-weight: 500;
   &:focus {
     background-color: var(--indigo-50);
-    }
+  }
 }
 .title {
   flex: 1 1 auto;

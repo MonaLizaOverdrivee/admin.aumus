@@ -10,7 +10,7 @@ import Menu from "primevue/menu";
 import { useRoute } from "vue-router";
 import { ref, computed } from "vue";
 // import { useAbility } from '@casl/vue';
-import ability from "@/utils/permissions"
+import {ability} from "@/utils/permissions";
 
 export default {
   components: { Menu },
@@ -29,7 +29,7 @@ export default {
         icon: "pi pi-file",
         to: "/pages",
         class: computed(() => (route.path.includes("/pages") ? "active" : "")),
-        visible: () => ability.can('access', '/pages')
+        visible: () => ability.can("access", "/pages"),
       },
       {
         label: "Новости",
@@ -64,7 +64,7 @@ export default {
     ]);
     return {
       items,
-      ability
+      ability,
     };
   },
 };
@@ -88,7 +88,7 @@ export default {
   .active .p-menuitem-link {
     border-left-color: var(--primary-color);
     background-color: var(--surface-700);
-    font-weight: 500; 
+    font-weight: 500;
   }
   .p-menuitem-link:hover {
     background-color: var(--surface-700) !important;
