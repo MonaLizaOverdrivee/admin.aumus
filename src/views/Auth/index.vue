@@ -4,8 +4,8 @@
       <img src="@/assets/logo.png" alt="" />
     </div>
     <div class="p-col-6 auth__form p-d-flex p-ai-center p-jc-center">
-      <div class="p-p-3">
-        <h1>Вход в систему</h1>
+      <div class="p-p-3 form__wraper p-col-6">
+        <h1 class="p-text-center">Вход в систему</h1>
         <LoginForm />
       </div>
     </div>
@@ -25,7 +25,11 @@ export default {
   height: 100vh;
   .auth__form {
     // background-color: var(--primary-color);
-    color: var(--primary-color-text);
+    // color: var(--primary-color-text);
+    .form__wraper {
+      border-radius: 8px;
+      background-color: #fff;
+    }
   }
   .auth__logo {
     background-color: #fff;

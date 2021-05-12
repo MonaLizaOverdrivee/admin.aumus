@@ -56,10 +56,11 @@ export default {
     async loadPages({ commit }) {
       try {
         const { data } = await api.pages.allPages();
-        const { data: loginData } = await api.auth.logIn("art", "Q123456e");
-        console.log(loginData);
+        // const { data: loginData } = await api.auth.logIn("art", "Q123456e");
+        // console.log(loginData);
         commit("SET_PAGES_LIST", data);
       } catch ({ response }) {
+        console.log(response)
         commit(
           "notification/SET_NOTIFY",
           {

@@ -32,7 +32,6 @@ export default {
     onMounted(() => {
       store.dispatch("pages/loadPagesCount");
       store.dispatch("pages/loadPages");
-      store.dispatch("auth/login")
     });
     const pages = computed(() => store.getters["pages/pages"]);
     function createPage() {

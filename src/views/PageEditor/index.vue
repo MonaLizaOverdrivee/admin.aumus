@@ -144,7 +144,7 @@ export default {
     const router = useRouter();
     const route = useRoute();
     const store = useStore();
-    const role = computed(() => store.getters["auth/userAccess"].pages[route.params.id]);
+    const role = computed(() =>store.getters["auth/role"] === 'manager' ? store.getters["auth/userAccess"].pages[route.params.id] : 'admin');
     const confirm = useConfirm();
     const dataPage = reactive(store.getters["pages/editablePage"]);
     const display = ref(false);

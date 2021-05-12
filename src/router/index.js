@@ -12,62 +12,55 @@ const routes = [
     name: "Auth",
     component: () => import(/* webpackChunkName: "auth" */ "../views/Auth/index.vue"),
     meta: {
-      layout: 'auth'
-    }
+      layout: "auth",
+    },
   },
   {
     path: "/menu",
     name: "Menu",
-    component: () =>
-      import(/* webpackChunkName: "pages" */ "../views/Menu.vue"),
+    component: () => import(/* webpackChunkName: "menu" */ "../views/Menu.vue"),
   },
   {
     path: "/pages",
     name: "Pages",
-    component: () =>
-      import(/* webpackChunkName: "pages" */ "../views/Pages/index.vue"),
+    component: () => import(/* webpackChunkName: "pages" */ "../views/Pages/index.vue"),
   },
   {
     path: "/pages/:id",
     name: "PagesId",
     component: () =>
-      import(/* webpackChunkName: "pages" */ "../views/PageEditor/index.vue"),
+      import(/* webpackChunkName: "pagesId" */ "../views/PageEditor/index.vue"),
   },
   {
     path: "/pages/new",
     name: "PagesNew",
     component: () =>
-      import(/* webpackChunkName: "pages" */ "../views/PageEditor/index.vue"),
+      import(/* webpackChunkName: "pagesNew" */ "../views/PageEditor/index.vue"),
   },
   {
     path: "/news",
     name: "News",
-    component: () =>
-      import(/* webpackChunkName: "pages" */ "../views/News.vue"),
+    component: () => import(/* webpackChunkName: "news" */ "../views/News.vue"),
   },
   {
     path: "/stats",
     name: "Stats",
-    component: () =>
-      import(/* webpackChunkName: "pages" */ "../views/Stats.vue"),
+    component: () => import(/* webpackChunkName: "stats" */ "../views/Stats.vue"),
   },
   {
     path: "/base",
     name: "Base",
-    component: () =>
-      import(/* webpackChunkName: "pages" */ "../views/Base.vue"),
+    component: () => import(/* webpackChunkName: "base" */ "../views/Base.vue"),
   },
   {
     path: "/access",
     name: "Access",
-    component: () =>
-      import(/* webpackChunkName: "pages" */ "../views/Access.vue"),
+    component: () => import(/* webpackChunkName: "access" */ "../views/Access.vue"),
   },
   {
     path: "/errors",
     name: "Errors",
-    component: () =>
-      import(/* webpackChunkName: "pages" */ "../views/Errors.vue"),
+    component: () => import(/* webpackChunkName: "errors" */ "../views/Errors.vue"),
   },
 ];
 
@@ -77,10 +70,9 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  if (
-    to.name === "PagesId" &&
-    Object.keys(store.getters["pages/editablePage"]).length === 0
-  ) {
+  const checkPageData = Object.keys(store.getters["pages/editablePage"]).length === 0 && to.name === "PagesId"
+
+  if (checkPageData) {
     next("/pages");
   } else {
     next();
