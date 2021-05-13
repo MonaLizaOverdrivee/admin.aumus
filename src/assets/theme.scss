@@ -4,7 +4,8 @@
 .p-dialog .p-dialog-header .p-dialog-header-icon:focus,
 .p-panelmenu .p-panelmenu-header > a:focus,
 .p-tabview .p-tabview-nav li .p-tabview-nav-link:not(.p-disabled):focus,
-.p-panelmenu .p-panelmenu-content .p-menuitem .p-menuitem-link:focus
+.p-panelmenu .p-panelmenu-content .p-menuitem .p-menuitem-link:focus,
+.p-inputtext:enabled:focus
 {
     box-shadow: none !important;
 }
@@ -14,8 +15,6 @@ button {
     font: inherit;
     color: inherit;
     background-color: transparent;
-    /* отображаем курсор в виде руки при наведении; некоторые
-    считают, что необходимо оставлять стрелочный вид для кнопок */
     cursor: pointer;
   }
 .container {

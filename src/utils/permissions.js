@@ -26,16 +26,17 @@
 import { Ability, AbilityBuilder } from "@casl/ability";
 
 export const ability = new Ability()
-export function updatePermissions(accessParam) {
+export function updatePermissions(user) {
+  if(user === null) return
   const { can, rules } = new AbilityBuilder();
 
-  if (accessParam.role === "admin") {
+  if (user.role.type === "admin") {
     can("manage", "all");
   } else {
     can("create", "editor");
     can("change", "editor");
     can("change", "contentManager");
-    for (const iterator of accessParam.modules) {
+    for (const iterator of user.access.modules) {
       can("access", iterator);
     }
   }

@@ -7,7 +7,7 @@ import App from "./App.vue";
 import router from "./router";
 import store from "./store";
 import PrimeVue from "primevue/config";
-import "./assets/theme.css";
+import "./assets/theme.scss";
 import ConfirmationService from "primevue/confirmationservice";
 import ToastService from "primevue/toastservice";
 import { abilitiesPlugin } from "@casl/vue";

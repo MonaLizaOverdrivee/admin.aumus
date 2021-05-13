@@ -23,6 +23,7 @@ export default {
         icon: "pi pi-list",
         to: "/menu",
         class: computed(() => (route.path === "/menu" ? "active" : "")),
+         visible: () => ability.can("access", "/menu"),
       },
       {
         label: "Страницы",
@@ -36,30 +37,35 @@ export default {
         icon: "pi pi-book",
         to: "/news",
         class: computed(() => (route.path === "/news" ? "active" : "")),
+         visible: () => ability.can("access", "/news"),
       },
       {
         label: "Статистика",
         icon: "pi pi-chart-bar",
         to: "/stats",
         class: computed(() => (route.path === "/stats" ? "active" : "")),
+         visible: () => ability.can("access", "/stats"),
       },
       {
         label: "База",
         icon: "pi pi-table",
         to: "/base",
         class: computed(() => (route.path === "/base" ? "active" : "")),
+         visible: () => ability.can("access", "/base"),
       },
       {
         label: "Доступ",
         icon: "pi pi-lock",
         to: "/access",
         class: computed(() => (route.path === "/access" ? "active" : "")),
+         visible: () => ability.can("access", "/access"),
       },
       {
         label: "Ошибки",
         icon: "pi pi-ban",
-        to: "/",
+        to: "/errors",
         class: computed(() => (route.path === "/errors" ? "active" : "")),
+         visible: () => ability.can("access", "/errors"),
       },
     ]);
     return {

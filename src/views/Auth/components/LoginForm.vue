@@ -43,11 +43,13 @@ import * as yup from "yup";
 import { ref } from "vue"
 import { useField, useForm } from "vee-validate";
 import { useStore } from "vuex"
+import { useRouter } from "vue-router"
 
 export default {
   components: { InputText, Button, ProgressSpinner },
   setup() {
     const store = useStore()
+    const router = useRouter()
     const loader = ref(false);
     const invalidSubmitMessage = ref('')
     const schema = yup.object({
@@ -62,9 +64,10 @@ export default {
         loader.value = true
         await store.dispatch('auth/login', data)
         loader.value = false
+        router.push('/')
       } catch (error) {
          loader.value = false
-        invalidSubmitMessage.value = "Invalid credantionals"
+        invalidSubmitMessage.value = "Неправильный логин или пароль"
       }
     })
     return {
