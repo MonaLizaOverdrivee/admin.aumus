@@ -71,12 +71,20 @@ export default {
       localStorage.clear();
     },
     // dont use
-    async autoLogin({ commit }, token) {
+    autoLogin({ commit }) {
       try {
-        const { data } = await api.auth.autoLogin(token);
-        commit("SET_USER", data.user);
-      } catch (error) {
-        console.log(error);
+        const token = localStorage.getItem('token')
+        const user = JSON.parse(localStorage.getItem('user'))
+
+        if(!token || !user) throw new Error("Ошибка авторизации, нет данных о пользователе")
+
+        commit("SET_TOKEN", token)
+        commit("SET_USER", user)
+        console.log(user)
+        updatePermissions(user);
+      } catch(e) {
+        console.log(e)
+        return Promise.reject()
       }
     },
   },

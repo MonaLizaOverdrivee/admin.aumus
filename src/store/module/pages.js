@@ -59,6 +59,7 @@ export default {
         // const { data: loginData } = await api.auth.logIn("art", "Q123456e");
         // console.log(loginData);
         commit("SET_PAGES_LIST", data);
+        console.log(data)
       } catch ({ response }) {
         console.log(response)
         commit(

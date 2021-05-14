@@ -5,8 +5,11 @@ export default (axios) => ({
   markAuthTime() {
     return axios.put()
   },
-  getUsers() {
-    return axios.get()
+  getAllUsers() {
+    return axios.get("users")
+  },
+  usersCount() {
+    return axios.get("users/count")
   },
   changeDataUsers() {
     return axios.put()

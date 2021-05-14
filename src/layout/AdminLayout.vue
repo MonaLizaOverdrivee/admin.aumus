@@ -23,16 +23,10 @@
 import AppSidebarMenu from "../components/SideBar/AppSidebarMenu";
 import AppHeader from "@/components/Header/AppHeader"
 import ScrollPanel from "primevue/scrollpanel";
-import { updatePermissions } from "@/utils/permissions"
 export default {
   mounted() {
     this.$nextTick(() => {
-      const user = JSON.parse(localStorage.getItem('user'))
-      // this.$store.commit('auth/SET_TOKEN', localStorage.getItem('token'))
-      this.$store.commit('auth/SET_USER', user)
-      updatePermissions(user)
-      console.log(user)
-      console.log(new Date(user.updated_at))
+      this.$store.dispatch("auth/autoLogin").catch(() => this.$router.push('/auth'))
     })
   },
   components: { AppSidebarMenu, AppHeader, ScrollPanel },

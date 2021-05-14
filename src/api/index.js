@@ -1,18 +1,20 @@
 import axios from "axios";
 import pages from "./pages";
 import auth from "./auth";
+import users from "./users";
 
 const baseAxios = axios.create({
   baseURL: process.env.VUE_APP_BACKEND_URL,
 });
 
 // const authAxios = axios.create({
-//   baseURL
+//   baseURL: process.env.VUE_APP_BACKEND_URL + "auth/local"
 // })
 
 export default {
   pages: pages(baseAxios),
   auth: auth(baseAxios),
+  users: users(baseAxios),
 };
 
 baseAxios.interceptors.request.use(function(config) {
