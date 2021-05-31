@@ -1,5 +1,7 @@
 <template>
   <h1>home</h1>
+  {{ home({label: 'home'}) }}
+  <button @click="cli">click</button>
 </template>
 
 <script>
@@ -7,5 +9,15 @@
 
 export default {
   components: {},
+  data() {
+    return {
+      home: a => a.label
+    }
+  },
+  methods: {
+    cli() {
+      
+    }
+  }
 };
 </script>

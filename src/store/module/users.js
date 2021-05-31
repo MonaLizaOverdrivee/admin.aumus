@@ -1,9 +1,13 @@
 import api from "@/api"
+// import isEqual from "lodash/isEqual";
+// import cloneDeep from "lodash/cloneDeep";
 
 export default {
   namespaced: true,
   state() {
     return {
+      startStateEditableUser: {},
+      currentEditableUser: {},
       count: null,
       users: []
     }
@@ -11,6 +15,7 @@ export default {
   getters: {
     users: ({ users }) => users,
     usersCount: ({ count }) => count
+    // compare
   },
   mutations: {
     SET_USERS(state, payload) {

@@ -82,8 +82,7 @@ export default {
         commit("SET_USER", user)
         console.log(user)
         updatePermissions(user);
-      } catch(e) {
-        console.log(e)
+      } catch {
         return Promise.reject()
       }
     },

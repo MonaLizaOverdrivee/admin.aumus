@@ -1,32 +1,35 @@
 <template>
-  <h1 class="p-m-0">Менеджер пользователей</h1>
-  <small>Всего пользователей: {{ $store.getters["users/usersCount"] }}</small>
-  <div class="p-d-flex p-jc-between p-mt-4">
-    <div>
-      <span class="p-input-icon-left">
-        <i class="pi pi-search" />
-        <InputText type="text" placeholder="Поиск" v-model="search" />
-      </span>
-    </div>
-    <div>
-      <Button label="Новый пользователь" icon="pi pi-plus" @click="createUser" />
-    </div>
-  </div>
-  <UserTable :users="users" />
+  <UserHeader v-model="search" @new-user-button-click="createUser"/>
+  <UserTable :users="users" @select-user="editUser"/>
+  <Dialog
+     header="Редактор пользователя"
+     :closable="false"
+    v-model:visible="visibleRoleEditor"
+    :style="{ width: '80vw' }"
+    :maximizable="true"
+    :modal="true"
+  >
+    <UserRoleEditor :userData="dataUserEditable" @close-modal="clsoseModalWithCheck"/>
+  </Dialog>
 </template>
 
 <script>
 import { onMounted, ref } from "vue";
 import { useStore } from "vuex";
+import Dialog from "primevue/dialog";
 import UserTable from "./components/UserTable";
-import Button from "primevue/button";
-import InputText from "primevue/inputtext";
+import UserRoleEditor from "./components/UserRoleEditor"
+import UserHeader from "./components/UserHeader"
+import { useConfirm } from "primevue/useconfirm";
 import { computed } from "vue";
 export default {
-  components: { UserTable, Button, InputText },
+  components: { UserTable, UserRoleEditor, UserHeader, Dialog },
   setup() {
     const store = useStore();
+    const confirm = useConfirm()
     const search = ref("");
+    const dataUserEditable = ref()
+    const visibleRoleEditor = ref(false)
     onMounted(() => {
       store.dispatch("users/loadUsersCount");
       store.dispatch("users/loadUsers");
@@ -34,10 +37,37 @@ export default {
     const users = computed(() => store.getters["users/users"]);
     function createUser() {
     }
+    function editUser(user) {
+      dataUserEditable.value = user
+      visibleRoleEditor.value = true
+    }
+    function clsoseModalWithCheck(check) {
+      console.log(check)
+      if(!check){
+        confirm.require({
+        message: "Есть не сохраненные данные, всё ровно выйти?",
+        header: "Подтвердите действие",
+        icon: "pi pi-exclamation-triangle",
+        acceptLabel: "Да",
+        rejectLabel: "Нет",
+        accept: () => {
+          visibleRoleEditor.value = false
+        },
+      });
+      } else {
+         visibleRoleEditor.value = false
+      }
+      
+     
+    }
     return {
       users,
       createUser,
+      editUser,
       search,
+      visibleRoleEditor,
+      dataUserEditable,
+      clsoseModalWithCheck
     };
   },
 };

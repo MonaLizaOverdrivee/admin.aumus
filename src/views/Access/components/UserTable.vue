@@ -5,7 +5,7 @@
       :scrollable="true"
       scrollHeight="400px"
       selectionMode="single"
-      @row-click="selectUser($event.data)"
+      @row-click="$emit('select-user', $event.data)"
     >
       <Column
         header="Ф.И.О"
@@ -37,6 +37,7 @@ import Column from "primevue/column";
 
 export default {
   components: { DataTable, Column },
+  emits: ['select-user'],
   props: ["users"],
   setup() {
     function selectUser(dataUser) {
