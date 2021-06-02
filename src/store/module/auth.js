@@ -80,7 +80,6 @@ export default {
 
         commit("SET_TOKEN", token)
         commit("SET_USER", user)
-        console.log(user)
         updatePermissions(user);
       } catch {
         return Promise.reject()

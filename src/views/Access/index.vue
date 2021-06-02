@@ -1,7 +1,7 @@
 <template>
   <UserHeader v-model="search" @new-user-button-click="createUser"/>
   <UserTable :users="users" @select-user="editUser"/>
-  <UserRoleEditor v-model="visibleRoleEditor" :userData="dataUserEditable" v-if="visibleRoleEditor"/>
+  <UserRoleEditor v-model="visibleRoleEditor" :userData="dataUserEditable"/>
 </template>
 
 <script>

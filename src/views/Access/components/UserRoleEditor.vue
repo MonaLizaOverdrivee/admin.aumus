@@ -81,10 +81,10 @@ import Password from "primevue/password";
 import InputSwitch from "primevue/inputswitch";
 import { isEqual, cloneDeep } from "@/use/useCompare";
 import { useConfirm } from "primevue/useconfirm";
-import { computed, reactive, ref } from "vue";
+import { computed, ref, watch } from "vue";
 export default {
   components: { Button, InputText, Dropdown, Password, InputSwitch, Dialog },
-  emits: ["close-modal", "update:modelValue"],
+  emits: ["update:modelValue"],
   props: {
     userData: {
       type: Object,
@@ -96,17 +96,23 @@ export default {
     },
   },
   setup(props, { emit }) {
-    const startStateEditableUser = cloneDeep(props.userData);
-    const currentEditableUser = reactive(cloneDeep(props.userData));
+    const startStateEditableUser = ref();
+    const currentEditableUser = ref();
     const confirm = useConfirm();
+
+    watch(props, () => {
+      console.log('change')
+      currentEditableUser.value = cloneDeep(props.userData);
+      startStateEditableUser.value = cloneDeep(props.userData);
+    });
 
     const roleOptions = ref([
       { name: "Администратор", type: "admin" },
-      { name: "Менеджер", type: "editor" },
+      { name: "Менеджер", type: "manager" },
     ]);
     const password = ref();
     const checkChange = computed(() =>
-      isEqual(startStateEditableUser, currentEditableUser)
+      isEqual(startStateEditableUser.value, currentEditableUser.value)
     );
     function close() {
       if (!checkChange.value) {
