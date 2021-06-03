@@ -2,12 +2,12 @@
   <Dialog
     header="Редактор пользователя"
     :closable="false"
-    :visible="modelValue"
+    v-model:visible="display"
     :style="{ width: '80vw' }"
     :maximizable="true"
     :modal="true"
   >
-    <div class="p-fluid p-formgrid p-grid p-mt-2" v-if="modelValue">
+    <div class="p-fluid p-formgrid p-grid p-mt-2">
       <div class="p-field p-col-12 p-md-3">
         <label for="firstName">Имя</label>
         <InputText id="firstName" type="text" v-model="currentEditableUser.firstName" />
@@ -79,64 +79,19 @@ import Dialog from "primevue/dialog";
 import Dropdown from "primevue/dropdown";
 import Password from "primevue/password";
 import InputSwitch from "primevue/inputswitch";
-import { isEqual, cloneDeep } from "@/use/useCompare";
-import { useConfirm } from "primevue/useconfirm";
-import { computed, ref, watch } from "vue";
+import actions from "../use/actions";
+import state from "../use/state"
+
 export default {
   components: { Button, InputText, Dropdown, Password, InputSwitch, Dialog },
-  emits: ["update:modelValue"],
-  props: {
-    userData: {
-      type: Object,
-      default: () => ({}),
-    },
-    modelValue: {
-      type: Boolean,
-      required: true,
-    },
-  },
-  setup(props, { emit }) {
-    const startStateEditableUser = ref();
-    const currentEditableUser = ref();
-    const confirm = useConfirm();
-
-    watch(props, () => {
-      console.log('change')
-      currentEditableUser.value = cloneDeep(props.userData);
-      startStateEditableUser.value = cloneDeep(props.userData);
-    });
-
-    const roleOptions = ref([
-      { name: "Администратор", type: "admin" },
-      { name: "Менеджер", type: "manager" },
-    ]);
-    const password = ref();
-    const checkChange = computed(() =>
-      isEqual(startStateEditableUser.value, currentEditableUser.value)
-    );
-    function close() {
-      if (!checkChange.value) {
-        confirm.require({
-          message: "Есть не сохраненные данные, всё ровно выйти?",
-          header: "Подтвердите действие",
-          icon: "pi pi-exclamation-triangle",
-          acceptLabel: "Да",
-          rejectLabel: "Нет",
-          accept: () => {
-            emit("update:modelValue", false);
-          },
-        });
-      } else {
-        emit("update:modelValue", false);
-      }
-    }
+  setup() {
+    const open = (payload) => actions.open(payload);
+    const close = () => actions.close()
+    console.log(state())
     return {
+      open,
       close,
-      checkChange,
-      startStateEditableUser,
-      currentEditableUser,
-      roleOptions,
-      password,
+      ...state()
     };
   },
 };

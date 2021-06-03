@@ -1,7 +1,7 @@
 <template>
   <UserHeader v-model="search" @new-user-button-click="createUser"/>
   <UserTable :users="users" @select-user="editUser"/>
-  <UserRoleEditor v-model="visibleRoleEditor" :userData="dataUserEditable"/>
+  <UserRoleEditor  ref="modal"/>
 </template>
 
 <script>
@@ -11,6 +11,7 @@ import UserTable from "./components/UserTable";
 import UserRoleEditor from "./components/UserRoleEditor"
 import UserHeader from "./components/UserHeader"
 import { computed } from "vue";
+
 export default {
   components: { UserTable, UserRoleEditor, UserHeader },
   setup() {
@@ -18,6 +19,7 @@ export default {
     const search = ref("");
     const dataUserEditable = ref()
     const visibleRoleEditor = ref(false)
+    const modal = ref(null)
     onMounted(() => {
       store.dispatch("users/loadUsersCount");
       store.dispatch("users/loadUsers");
@@ -25,10 +27,12 @@ export default {
     const users = computed(() => store.getters["users/users"]);
     function createUser() {
     }
-    function editUser(user) {
-      visibleRoleEditor.value = true
-      dataUserEditable.value = user
-    }
+    // function editUser(user) {
+    //   visibleRoleEditor.value = true
+    //   dataUserEditable.value = user
+    //   modal.value.close_('123')
+    // }
+    const editUser = (user) => modal.value.open(user)
     return {
       users,
       createUser,
@@ -36,6 +40,7 @@ export default {
       search,
       visibleRoleEditor,
       dataUserEditable,
+      modal
     };
   },
 };
