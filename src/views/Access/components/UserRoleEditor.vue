@@ -62,7 +62,6 @@
       </div>
     </div>
     {{ checkChange }} <br />
-    <!-- <pre>{{ startStateEditableUser }}</pre> <br /> -->
     <pre>{{ currentEditableUser }} </pre>
     <br />
     <template #footer>
@@ -99,11 +98,12 @@ export default {
     const startStateEditableUser = ref();
     const currentEditableUser = ref();
     const confirm = useConfirm();
-
     watch(props, () => {
-      console.log('change')
-      currentEditableUser.value = cloneDeep(props.userData);
-      startStateEditableUser.value = cloneDeep(props.userData);
+      if (props.modelValue) {
+        currentEditableUser.value = cloneDeep(props.userData);
+        startStateEditableUser.value = cloneDeep(props.userData);
+        console.log('open')
+      }
     });
 
     const roleOptions = ref([

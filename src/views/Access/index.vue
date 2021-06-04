@@ -11,12 +11,30 @@ import UserTable from "./components/UserTable";
 import UserRoleEditor from "./components/UserRoleEditor"
 import UserHeader from "./components/UserHeader"
 import { computed } from "vue";
+const emptyFields = {
+  username: "",
+  email: "",
+  confirmed: true,
+  blocked: false,
+  role: {
+    id: 4,
+    name: "Admin",
+    description: "admin",
+    type: "",
+  },
+  access: null,
+  last_auth: null,
+  firstName: "",
+  lastName: "",
+  created_at: "",
+  updated_at: "",
+};
 export default {
   components: { UserTable, UserRoleEditor, UserHeader },
   setup() {
     const store = useStore();
     const search = ref("");
-    const dataUserEditable = ref()
+    const dataUserEditable = ref(emptyFields)
     const visibleRoleEditor = ref(false)
     onMounted(() => {
       store.dispatch("users/loadUsersCount");
@@ -24,6 +42,8 @@ export default {
     });
     const users = computed(() => store.getters["users/users"]);
     function createUser() {
+      visibleRoleEditor.value = true
+      dataUserEditable.value = emptyFields
     }
     function editUser(user) {
       visibleRoleEditor.value = true
