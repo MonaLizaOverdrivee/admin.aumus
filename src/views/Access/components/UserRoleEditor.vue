@@ -61,14 +61,38 @@
         </div>
       </div>
     </div>
-    {{ checkChange }} <br />
-    <pre>{{ currentEditableUser }} </pre>
-    <br />
+    <DataTable
+      :value="accessData"
+      :scrollable="true"
+      scrollHeight="400px"
+      selectionMode="single"
+      v-if="currentEditableUser.access"
+    >
+      <Column field="id" header="ID" style="min-width: 200px" />
+      <Column field="page_name" header="Название страницы" style="min-width: 200px" />
+      <Column field="role" header="Доступ" style="min-width: 200px">
+        <template #body="{ data }">
+          <div class="p-fluid" style="width: 100%">
+            <Dropdown
+              v-model="currentEditableUser.access.pages[data.id].role"
+              :options="pageRole"
+              optionLabel="name"
+              optionValue="type"
+              placeholder="Выберете тип роли"
+            />
+          </div>
+        </template>
+      </Column>
+      <template #footer>
+        <div class="add-button">Добавить страницу или модуль</div>
+      </template>
+    </DataTable>
     <template #footer>
       <Button label="Сохранить" icon="pi pi-check" class="p-mr-2" />
       <Button label="Отмена" icon="pi pi-check" @click="close" />
     </template>
   </Dialog>
+  <Dialog :visible="false" modal="true"> </Dialog>
 </template>
 
 <script>
@@ -78,11 +102,22 @@ import Dialog from "primevue/dialog";
 import Dropdown from "primevue/dropdown";
 import Password from "primevue/password";
 import InputSwitch from "primevue/inputswitch";
-import { isEqual, cloneDeep } from "@/use/useCompare";
+import DataTable from "primevue/datatable";
+import Column from "primevue/column";
+import { isEqual, cloneDeep } from "@/helpers/useCompare";
 import { useConfirm } from "primevue/useconfirm";
 import { computed, ref, watch } from "vue";
 export default {
-  components: { Button, InputText, Dropdown, Password, InputSwitch, Dialog },
+  components: {
+    Button,
+    InputText,
+    Dropdown,
+    Password,
+    InputSwitch,
+    Dialog,
+    DataTable,
+    Column,
+  },
   emits: ["update:modelValue"],
   props: {
     userData: {
@@ -102,7 +137,6 @@ export default {
       if (props.modelValue) {
         currentEditableUser.value = cloneDeep(props.userData);
         startStateEditableUser.value = cloneDeep(props.userData);
-        console.log('open')
       }
     });
 
@@ -110,9 +144,19 @@ export default {
       { name: "Администратор", type: "admin" },
       { name: "Менеджер", type: "manager" },
     ]);
+    const pageRole = ref([
+      { name: "Редактор", type: "editor" },
+      { name: "Контент менеджер", type: "contentManager" },
+    ]);
     const password = ref();
     const checkChange = computed(() =>
       isEqual(startStateEditableUser.value, currentEditableUser.value)
+    );
+    const accessData = computed(() =>
+      Object.keys(currentEditableUser.value.access.pages).map((itm) => ({
+        id: itm,
+        ...currentEditableUser.value.access.pages[itm],
+      }))
     );
     function close() {
       if (!checkChange.value) {
@@ -137,13 +181,32 @@ export default {
       currentEditableUser,
       roleOptions,
       password,
+      accessData,
+      pageRole,
     };
   },
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .user__plain-info {
   border-radius: 8px;
+}
+.add-button {
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  cursor: pointer;
+  padding: 1rem;
+  font-style: oblique;
+  text-decoration: underline;
+  color: var(--surface-600);
+    &:hover {
+      background: var(--surface-300);
+      text-decoration: none;
+    }
+}
+:deep(.p-datatable-footer) {
+  padding: 0;
 }
 </style>
