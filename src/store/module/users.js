@@ -9,12 +9,14 @@ export default {
       startStateEditableUser: {},
       currentEditableUser: {},
       count: null,
-      users: []
+      users: [],
+      roles: {}
     }
   },
   getters: {
     users: ({ users }) => users,
-    usersCount: ({ count }) => count
+    usersCount: ({ count }) => count,
+    usersRole: ({ roles }) => roles
     // compare
   },
   mutations: {
@@ -23,6 +25,13 @@ export default {
     },
     SET_USERS_COUNT(state, count) {
       state.count = count
+    },
+    CHANGE_USER(state, payload) {
+      const i = state.users.findIndex(itm => itm.id = payload.id)
+      state.users[i] = payload
+    },
+    SET_USERS_ROLE(state, payload) {
+      state.roles = payload
     }
   },
   actions: {
@@ -41,6 +50,24 @@ export default {
       } catch (error) {
         console.log(error)
       }
+    },
+    async changeData({ commit }, user) {
+      console.log('request', user)
+      try {
+       const { data } = await api.users.changeDataUsers(user)
+       commit('CHANGE_USER', data)
+        console.log('response', data)
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    async loadUsersRole({ commit }) {
+      const { data } = await api.users.getUserRole()
+      const list = data.roles.reduce((acc, itm) => {
+        acc[itm.type] = itm;
+        return acc;
+      }, {});
+      commit('SET_USERS_ROLE', list)
     }
   }
 }

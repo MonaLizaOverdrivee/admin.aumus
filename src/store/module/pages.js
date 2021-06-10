@@ -19,6 +19,7 @@ export default {
     qntElements: ({ editablePage }) => editablePage.PageData.length,
     compare: ({ editablePage, startEditablePage }) =>
       isEqual(editablePage, startEditablePage),
+    pagesSummary: ({ pages }) => pages.map(({ Title, id }) => ({id, Title}))
   },
   mutations: {
     SET_PAGES_COUNT(state, payload) {
@@ -77,13 +78,21 @@ export default {
         );
       }
     },
-    async loadSearchPage(query, { commit }) {
+    async loadSearchPage({ commit }, query) {
       try {
         const { data } = await api.pages.searchPage(query);
         commit("SET_PAGES_LIST", data);
         console.log(data);
-      } catch (error) {
-        console.log(error);
+      } catch ({ response }) {
+        commit(
+          "notification/SET_NOTIFY",
+          {
+            severity: "error",
+            summary: "Ошибка!",
+            detail: response.status + " " + response.statusText,
+          },
+          { root: true }
+        );
       }
     },
     async saveEditablePage({ state, commit }) {

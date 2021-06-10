@@ -26,7 +26,10 @@
       </div>
       <div class="p-field p-col-12 p-md-3">
         <label for="password">Пароль</label>
+        <template v-if="visiblePasswordField">
         <Password v-model="password" toggleMask />
+        </template>
+        <Button label="Изменть пароль" @click="visiblePasswordField = true" class="p-button-outlined" v-else/>
       </div>
       <div class="p-field p-col-12 p-md-3">
         <label for="role">Роль</label>
@@ -72,30 +75,56 @@
       <Column field="page_name" header="Название страницы" style="min-width: 200px" />
       <Column field="role" header="Доступ" style="min-width: 200px">
         <template #body="{ data }">
-          <div class="p-fluid" style="width: 100%">
-            <Dropdown
-              v-model="currentEditableUser.access.pages[data.id].role"
-              :options="pageRole"
-              optionLabel="name"
-              optionValue="type"
-              placeholder="Выберете тип роли"
-            />
+          <div class="p-d-flex" style="width: 100%">
+            <div class="p-mr-1" style="flex: 1 1 0">
+              <div class="p-fluid">
+                <Dropdown
+                  v-model="currentEditableUser.access.pages[data.id].role"
+                  :options="pageRole"
+                  optionLabel="name"
+                  optionValue="type"
+                  placeholder="Выберете тип роли"
+                />
+              </div>
+            </div>
+            <div>
+              <Button
+                icon="pi pi-times"
+                class="p-button-outlined p-button-danger"
+                @click="deleteAccess(data.id)"
+              />
+            </div>
           </div>
         </template>
       </Column>
       <template #footer>
-        <div class="add-button">Добавить страницу или модуль</div>
+        <div class="add-button" @click="pageSearchModal = true">
+          Добавить страницу или модуль
+        </div>
       </template>
     </DataTable>
     <template #footer>
-      <Button label="Сохранить" icon="pi pi-check" class="p-mr-2" />
+      <Button label="Сохранить" icon="pi pi-check" class="p-mr-2" @click="save"/>
       <Button label="Отмена" icon="pi pi-check" @click="close" />
     </template>
   </Dialog>
-  <Dialog :visible="false" modal="true"> </Dialog>
+  <Dialog
+    header="Добавить доступ"
+    v-model:visible="pageSearchModal"
+    :modal="true"
+    :closable="false"
+    :style="{ width: '40vw' }"
+  >
+    <EditorPageAddModal @choose-page="addAccess" />
+    <template #footer>
+      <Button label="Отмена" @click="pageSearchModal = false" />
+    </template>
+  </Dialog>
 </template>
 
 <script>
+import helpers from "./helpers";
+import EditorPageAddModal from "./EditorPageAddModal.vue";
 import Button from "primevue/button";
 import InputText from "primevue/inputtext";
 import Dialog from "primevue/dialog";
@@ -106,7 +135,8 @@ import DataTable from "primevue/datatable";
 import Column from "primevue/column";
 import { isEqual, cloneDeep } from "@/helpers/useCompare";
 import { useConfirm } from "primevue/useconfirm";
-import { computed, ref, watch } from "vue";
+import { computed, ref, watch, onMounted } from "vue";
+import { useStore } from "vuex"
 export default {
   components: {
     Button,
@@ -117,6 +147,7 @@ export default {
     Dialog,
     DataTable,
     Column,
+    EditorPageAddModal,
   },
   emits: ["update:modelValue"],
   props: {
@@ -130,9 +161,13 @@ export default {
     },
   },
   setup(props, { emit }) {
+    onMounted(() => store.dispatch('users/loadUsersRole'))
+    const store = useStore()
     const startStateEditableUser = ref();
     const currentEditableUser = ref();
     const confirm = useConfirm();
+    const pageSearchModal = ref(false);
+    const visiblePasswordField = ref(false)
     watch(props, () => {
       if (props.modelValue) {
         currentEditableUser.value = cloneDeep(props.userData);
@@ -153,11 +188,24 @@ export default {
       isEqual(startStateEditableUser.value, currentEditableUser.value)
     );
     const accessData = computed(() =>
-      Object.keys(currentEditableUser.value.access.pages).map((itm) => ({
-        id: itm,
-        ...currentEditableUser.value.access.pages[itm],
-      }))
+      helpers.toArrayOfObject(currentEditableUser.value.access.pages)
     );
+    function addAccess(page) {
+      pageSearchModal.value = false;
+      currentEditableUser.value.access.pages[page.id] = {
+        role: page.role,
+        page_name: page.Title,
+      };
+    }
+    function deleteAccess(id) {
+      delete currentEditableUser.value.access.pages[id]
+    }
+    function save(){
+      let request = password.value && visiblePasswordField ? { ...currentEditableUser.value, password: password.value } : currentEditableUser.value
+      helpers.buildRequest(currentEditableUser.value, password.value, store.state.users.roles)
+      store.dispatch("users/changeData", request)
+      emit("update:modelValue", false)
+    }
     function close() {
       if (!checkChange.value) {
         confirm.require({
@@ -168,10 +216,12 @@ export default {
           rejectLabel: "Нет",
           accept: () => {
             emit("update:modelValue", false);
+            visiblePasswordField.value = false
           },
         });
       } else {
         emit("update:modelValue", false);
+        visiblePasswordField.value = false
       }
     }
     return {
@@ -183,6 +233,11 @@ export default {
       password,
       accessData,
       pageRole,
+      pageSearchModal,
+      addAccess,
+      deleteAccess,
+      visiblePasswordField,
+      save
     };
   },
 };
@@ -201,10 +256,10 @@ export default {
   font-style: oblique;
   text-decoration: underline;
   color: var(--surface-600);
-    &:hover {
-      background: var(--surface-300);
-      text-decoration: none;
-    }
+  &:hover {
+    background: var(--surface-300);
+    text-decoration: none;
+  }
 }
 :deep(.p-datatable-footer) {
   padding: 0;

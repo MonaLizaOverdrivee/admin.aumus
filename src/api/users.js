@@ -11,10 +11,13 @@ export default (axios) => ({
   usersCount() {
     return axios.get("users/count")
   },
-  changeDataUsers() {
-    return axios.put()
+  changeDataUsers(user) {
+    return axios.put(`users/${user.id}`, user)
   },
   deleteUser() {
     return axios.delete()
+  },
+  getUserRole() {
+    return axios.get("users-permissions/roles")
   }
 })

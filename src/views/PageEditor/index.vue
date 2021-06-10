@@ -71,7 +71,7 @@
       <component :is="itm.type + '-view_' + itm.style" :data="itm.data" />
     </ElementViewWrapper>
   </div>
-  <PlusInCircle @click="addElementManagerOpen" v-if="$ability.can('create', role)"/>
+  <AppAddButton @click="addElementManagerOpen" v-if="$ability.can('create', role)" />
   <pre>{{ dataPage }}</pre>
   <Dialog
     header="Менеджер элементов"
@@ -108,7 +108,7 @@
 </template>
 
 <script>
-import PlusInCircle from "@/components/UI/PlusInCircle"
+import AppAddButton from "@/components/UI/AppAddButton";
 import ColorPicker from "primevue/colorpicker";
 import PanelMenu from "primevue/panelmenu";
 import Dialog from "primevue/dialog";
@@ -132,7 +132,7 @@ export default {
     Dialog,
     PanelMenu,
     ColorPicker,
-    PlusInCircle,
+    AppAddButton,
     ...EditorElements,
     ...ViewElements,
   },
@@ -140,7 +140,11 @@ export default {
     const router = useRouter();
     const route = useRoute();
     const store = useStore();
-    const role = computed(() =>store.getters["auth/role"] === 'manager' ? store.getters["auth/userAccess"].pages[route.params.id].role : 'admin');
+    const role = computed(() =>
+      store.getters["auth/role"] === "manager"
+        ? store.getters["auth/userAccess"].pages[route.params.id].role
+        : "admin"
+    );
     const confirm = useConfirm();
     const dataPage = reactive(store.getters["pages/editablePage"]);
     const display = ref(false);
