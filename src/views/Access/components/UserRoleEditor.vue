@@ -69,7 +69,7 @@
       :scrollable="true"
       scrollHeight="400px"
       selectionMode="single"
-      v-if="currentEditableUser.access"
+      v-if="visibleAccessTable"
     >
       <Column field="id" header="ID" style="min-width: 200px" />
       <Column field="page_name" header="Название страницы" style="min-width: 200px" />
@@ -190,6 +190,7 @@ export default {
     const accessData = computed(() =>
       helpers.toArrayOfObject(currentEditableUser.value.access.pages)
     );
+    const visibleAccessTable = computed(() => currentEditableUser.value.role.type === 'manager')
     function addAccess(page) {
       pageSearchModal.value = false;
       currentEditableUser.value.access.pages[page.id] = {
@@ -201,8 +202,8 @@ export default {
       delete currentEditableUser.value.access.pages[id]
     }
     function save(){
-      let request = password.value && visiblePasswordField ? { ...currentEditableUser.value, password: password.value } : currentEditableUser.value
-      helpers.buildRequest(currentEditableUser.value, password.value, store.state.users.roles)
+      let request = helpers.buildRequest(currentEditableUser.value, password.value, store.state.users.roles)
+
       store.dispatch("users/changeData", request)
       emit("update:modelValue", false)
     }
@@ -237,7 +238,8 @@ export default {
       addAccess,
       deleteAccess,
       visiblePasswordField,
-      save
+      save,
+      visibleAccessTable
     };
   },
 };

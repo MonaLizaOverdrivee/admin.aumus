@@ -56,7 +56,7 @@ export default {
       try {
        const { data } = await api.users.changeDataUsers(user)
        commit('CHANGE_USER', data)
-        console.log('response', data)
+       console.log('response', data)
       } catch (error) {
         console.log(error)
       }
@@ -64,7 +64,7 @@ export default {
     async loadUsersRole({ commit }) {
       const { data } = await api.users.getUserRole()
       const list = data.roles.reduce((acc, itm) => {
-        acc[itm.type] = itm;
+        acc[itm.type] = {id: itm.id, type: itm.type, discription: itm.description, name: itm.name};
         return acc;
       }, {});
       commit('SET_USERS_ROLE', list)
