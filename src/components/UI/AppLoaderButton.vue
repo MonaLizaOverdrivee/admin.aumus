@@ -1,9 +1,10 @@
 <template>
-  <Button :label="text" :icon="icon" :class="classBtn" />
+  <Button :label="text" :icon="icon" :class="classBtn" :disabled="loadingButton"/>
 </template>
 
 <script>
 import Button from "primevue/button";
+import { mapGetters } from 'vuex'
 export default {
   components: { Button },
   props: {
@@ -19,10 +20,9 @@ export default {
     },
   },
   computed: {
+    ...mapGetters('loading', ['loadingButton']),
     icon() {
-      return this.$store.getters["loading/loadingButton"]
-        ? "pi pi-spin pi-spinner"
-        : this.iconBtn;
+      return this.loadingButton ? "pi pi-spin pi-spinner" : this.iconBtn;
     },
     text() {
       return this.label;

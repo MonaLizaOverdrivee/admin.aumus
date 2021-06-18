@@ -1,3 +1,5 @@
+import helpers from "@/helpers"
+
 export default (axios) => ({
   allPages() {
     return axios.get("pages");
@@ -12,8 +14,8 @@ export default (axios) => ({
     return axios.post("pages", newPage);
   },
   // $$$$$$$$$ not use $$$$$$$$$$$
-  searchPage(query) {
-    const queryParam = encodeURI(query);
-    return axios.get(`pages?Title_contains=${queryParam}`);
+  searchPage({query, start = 0, limit = 10}) {
+    const queryParam = encodeURI(helpers.withCapital(query));
+    return axios.get(`pages?Title_contains=${queryParam}&_start=${start}&_limit=${limit}`);
   },
 });

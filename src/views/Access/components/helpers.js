@@ -3,11 +3,11 @@ export default class {
     return { ...obj, role: "contentManager" };
   }
   static toArrayOfObject(obj) {
-    return Object.keys(obj).map((itm) => ({ id: itm, ...obj[itm] }));
+    return obj ? Object.keys(obj).map((itm) => ({ id: itm, ...obj[itm] })) : []
   }
-  static buildRequest(model, pass, roles) {
-    const userRole = model.role.type
-    const request = { ...model, role: roles[userRole] };
+  static buildRequest(user, pass, roles) {
+    const userRole = user.role.type
+    const request = { ...user, role: roles[userRole] };
     if (pass) request.password = pass;
     if (userRole === "admin") request.access = null;
     if(userRole === "manager" && !request.access) request.access.module.push("/pages")

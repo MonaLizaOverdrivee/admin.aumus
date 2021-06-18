@@ -1,23 +1,21 @@
+import api from '@/api';
 
 class User {
-  constructor(user) {
-    this.user = user;
-    this.userRole = {
-      admin: { description: "admin", id: 4, name: "Admin", type: "admin" },
-      manager: { description: "manager", id: 3, name: "Manager", type: "manager" },
-    };
+  constructor(role) {
+    this.userRole = role
   }
-
-  changeMainRole(type) {
-    this.user.role = this.userRole[type];
-  }
-  addDefaultManagerRole() {}
-  addNewAccess() {}
-  getData() {
-    return this.user;
-  }
-  getRole() {
+  async getRole() {
+    const { data } = api.users.getUserRole()
+    this.userRole = data
   }
 }
 
-export { User };
+
+// async function getRole() {
+//   const { data } = await api.users.getUserRole()
+//   return data
+// }
+function useUser() {
+  return new User()
+}
+export { User, useUser };

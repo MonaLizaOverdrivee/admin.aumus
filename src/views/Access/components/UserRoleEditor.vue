@@ -104,8 +104,8 @@
       </template>
     </DataTable>
     <template #footer>
-      <Button label="Сохранить" icon="pi pi-check" class="p-mr-2" @click="save"/>
-      <Button label="Отмена" icon="pi pi-check" @click="close" />
+      <AppLoaderButton label="Сохранить" icon="pi pi-check" classBtn="p-mr-2" @click="save"/>
+      <Button label="Отмена" icon="pi pi-times" @click="close" />
     </template>
   </Dialog>
   <Dialog
@@ -117,12 +117,13 @@
   >
     <EditorPageAddModal @choose-page="addAccess" />
     <template #footer>
-      <Button label="Отмена" @click="pageSearchModal = false" />
+      <Button label="Отмена" @click="pageSearchModal = false"/>
     </template>
   </Dialog>
 </template>
 
 <script>
+import AppLoaderButton from "@/components/UI/AppLoaderButton"
 import helpers from "./helpers";
 import EditorPageAddModal from "./EditorPageAddModal.vue";
 import Button from "primevue/button";
@@ -148,6 +149,7 @@ export default {
     DataTable,
     Column,
     EditorPageAddModal,
+    AppLoaderButton
   },
   emits: ["update:modelValue"],
   props: {
@@ -161,7 +163,9 @@ export default {
     },
   },
   setup(props, { emit }) {
-    onMounted(() => store.dispatch('users/loadUsersRole'))
+    onMounted(() => {
+      store.dispatch('users/loadUsersRole')
+    })
     const store = useStore()
     const startStateEditableUser = ref();
     const currentEditableUser = ref();
@@ -174,7 +178,6 @@ export default {
         startStateEditableUser.value = cloneDeep(props.userData);
       }
     });
-
     const roleOptions = ref([
       { name: "Администратор", type: "admin" },
       { name: "Менеджер", type: "manager" },
@@ -184,12 +187,8 @@ export default {
       { name: "Контент менеджер", type: "contentManager" },
     ]);
     const password = ref();
-    const checkChange = computed(() =>
-      isEqual(startStateEditableUser.value, currentEditableUser.value)
-    );
-    const accessData = computed(() =>
-      helpers.toArrayOfObject(currentEditableUser.value.access.pages)
-    );
+    const checkChange = computed(() => isEqual(startStateEditableUser.value, currentEditableUser.value));
+    const accessData = computed(() => helpers.toArrayOfObject(currentEditableUser.value.access?.pages));
     const visibleAccessTable = computed(() => currentEditableUser.value.role.type === 'manager')
     function addAccess(page) {
       pageSearchModal.value = false;
@@ -202,9 +201,9 @@ export default {
       delete currentEditableUser.value.access.pages[id]
     }
     function save(){
-      let request = helpers.buildRequest(currentEditableUser.value, password.value, store.state.users.roles)
-
-      store.dispatch("users/changeData", request)
+      const request = helpers.buildRequest(currentEditableUser.value, password.value, store.state.users.roles)
+      const funcName = request.id ? "changeData" : "create"
+      store.dispatch(`users/${funcName}`, request)
       emit("update:modelValue", false)
     }
     function close() {

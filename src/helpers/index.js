@@ -8,4 +8,7 @@ export default class Helpers {
   static clone(a, b) {
     return cloneDeep(a, b)
   }
+  static withCapital(str) {
+    return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase()
+  }
 }

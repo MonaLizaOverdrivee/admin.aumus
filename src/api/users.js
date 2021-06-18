@@ -1,6 +1,6 @@
 export default (axios) => ({
-  createUser() {
-    return axios.post()
+  createUser(user) {
+    return axios.post("users", user)
   },
   markAuthTime() {
     return axios.put()
