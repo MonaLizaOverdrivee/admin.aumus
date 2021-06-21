@@ -34,8 +34,8 @@ export default {
       state.roles = payload;
     },
     ADD_NEW_USER(state, user) {
-      state.users.pus(user)
-    }
+      state.users.push(user);
+    },
   },
   actions: {
     async loadUsers({ commit }) {
@@ -74,9 +74,9 @@ export default {
       }
     },
     async create({ commit }, user) {
-      try{
-        const { data:response } = await api.users.createUser(user)
-        commit('ADD_NEW_USER', response)
+      try {
+        const { data } = await api.users.createUser(user);
+        commit("ADD_NEW_USER", data);
       } catch ({ response }) {
         commit(
           "notification/SET_NOTIFY",

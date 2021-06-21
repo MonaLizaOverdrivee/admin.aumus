@@ -192,10 +192,7 @@ export default {
     const visibleAccessTable = computed(() => currentEditableUser.value.role.type === 'manager')
     function addAccess(page) {
       pageSearchModal.value = false;
-      currentEditableUser.value.access.pages[page.id] = {
-        role: page.role,
-        page_name: page.Title,
-      };
+      helpers.addPageToAccess(currentEditableUser.value, page)
     }
     function deleteAccess(id) {
       delete currentEditableUser.value.access.pages[id]

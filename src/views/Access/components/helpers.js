@@ -13,4 +13,22 @@ export default class {
     if(userRole === "manager" && !request.access) request.access.module.push("/pages")
     return request;
   }
+  static addPageToAccess(user, newPage) {
+    if(user.access) {
+      user.access.pages[newPage.id] = {
+        role: newPage.role,
+        page_name: newPage.Title,
+      };
+    } else {
+      user.access = {
+        pages: {
+          [newPage.id]: {
+            role: newPage.role,
+            page_name: newPage.Title,
+          }
+        },
+        modules: ["/pages"]
+      }
+    }
+  }
 }
