@@ -28,48 +28,44 @@
       <ProgressSpinner style="width: 40px; height: 40px" strokeWidth="8" />
     </div>
     <div class="p-text-center">
-      <small class="p-error" v-if="invalidSubmitMessage">{{
-        invalidSubmitMessage
-      }}</small>
+      <small class="p-error" v-if="invalidSubmitMessage">{{ invalidSubmitMessage }}</small>
     </div>
   </form>
 </template>
 
 <script>
 import InputText from "primevue/inputtext";
+import { valid } from "@/services/validation";
 import Button from "primevue/button";
 import ProgressSpinner from "primevue/progressspinner";
-import * as yup from "yup";
-import { ref } from "vue"
+import { ref } from "vue";
 import { useField, useForm } from "vee-validate";
-import { useStore } from "vuex"
-import { useRouter } from "vue-router"
+import { useStore } from "vuex";
+import { useRouter } from "vue-router";
 
 export default {
   components: { InputText, Button, ProgressSpinner },
   setup() {
-    const store = useStore()
-    const router = useRouter()
+    const store = useStore();
+    const router = useRouter();
     const loader = ref(false);
-    const invalidSubmitMessage = ref('')
-    const schema = yup.object({
-       email: yup.string().trim().required("Это обязательное поле").email("Введите корректный email"),
-       password: yup.string().trim().required("Это обязательное поле"),
-     })
-    const { handleSubmit } = useForm({validationSchema: schema});
-    const { value: email, errorMessage: eError } = useField('email')
-    const { value: password, errorMessage: pError } = useField('password')
+    const invalidSubmitMessage = ref("");
+    const { handleSubmit } = useForm();
+    const { value: email, errorMessage: eError } = useField("email", valid.email);
+    const { value: password, errorMessage: pError } = useField("password", valid.base);
+
     const onSubmit = handleSubmit(async (data) => {
       try {
-        loader.value = true
-        await store.dispatch('auth/login', data)
-        loader.value = false
-        router.push('/')
+        loader.value = true;
+        await store.dispatch("auth/login", data);
+        loader.value = false;
+        router.push("/");
       } catch (error) {
-         loader.value = false
-        invalidSubmitMessage.value = "Неправильный логин или пароль"
+        loader.value = false;
+        invalidSubmitMessage.value = "Неправильный логин или пароль";
       }
-    })
+    });
+
     return {
       email,
       password,
@@ -77,7 +73,7 @@ export default {
       eError,
       pError,
       invalidSubmitMessage,
-      loader
+      loader,
     };
   },
 };

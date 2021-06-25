@@ -78,6 +78,7 @@ export default {
         const { data } = await api.users.createUser(user);
         commit("ADD_NEW_USER", data);
       } catch ({ response }) {
+        console.log(response)
         commit(
           "notification/SET_NOTIFY",
           {
