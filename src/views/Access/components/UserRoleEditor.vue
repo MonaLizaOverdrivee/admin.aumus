@@ -8,29 +8,13 @@
     :modal="true"
   >
     <div class="p-fluid p-formgrid p-grid p-mt-2" v-if="modelValue">
-      <div class="p-field p-col-12 p-md-3">
-        <label for="firstName">Имя</label>
-        <InputText id="firstName" type="text" v-model="currentEditableUser.firstName" />
-      </div>
-      <div class="p-field p-col-12 p-md-3">
-        <label for="lastName">Фамилия</label>
-        <InputText id="lastName" type="text" v-model="currentEditableUser.lastName" />
-      </div>
-      <div class="p-field p-col-12 p-md-3">
-        <label for="username">Логин</label>
-        <InputText id="username" type="text" v-model="currentEditableUser.username" />
-      </div>
-      <div class="p-field p-col-12 p-md-3">
-        <label for="email">Email</label>
-        <InputText id="email" type="text" v-model="currentEditableUser.email" />
-      </div>
-      <div class="p-field p-col-12 p-md-3">
-        <label for="password">Пароль</label>
-        <template v-if="visiblePasswordField">
-        <Password v-model="password" toggleMask />
-        </template>
-        <Button label="Изменть пароль" @click="visiblePasswordField = true" class="p-button-outlined" v-else/>
-      </div>
+      <EditorCredentials
+        v-model:name="currentEditableUser.firstName"
+        v-model:surname="currentEditableUser.lastName"
+        v-model:login="currentEditableUser.username"
+        v-model:email="currentEditableUser.email"
+        v-model:password="password"
+      />
       <div class="p-field p-col-12 p-md-3">
         <label for="role">Роль</label>
         <Dropdown
@@ -123,14 +107,13 @@
 </template>
 
 <script>
+import EditorCredentials from "./EditorCredentials.vue"
 import AppLoaderButton from "@/components/UI/AppLoaderButton"
 import helpers from "./helpers";
 import EditorPageAddModal from "./EditorPageAddModal.vue";
 import Button from "primevue/button";
-import InputText from "primevue/inputtext";
 import Dialog from "primevue/dialog";
 import Dropdown from "primevue/dropdown";
-import Password from "primevue/password";
 import InputSwitch from "primevue/inputswitch";
 import DataTable from "primevue/datatable";
 import Column from "primevue/column";
@@ -141,15 +124,14 @@ import { useStore } from "vuex"
 export default {
   components: {
     Button,
-    InputText,
     Dropdown,
-    Password,
     InputSwitch,
     Dialog,
     DataTable,
     Column,
     EditorPageAddModal,
-    AppLoaderButton
+    AppLoaderButton,
+    EditorCredentials
   },
   emits: ["update:modelValue"],
   props: {
