@@ -1,9 +1,11 @@
 <template>
-  <h1>title_1</h1>
+  <h4 class="p-mt-2 p-mb-0">{{ data }}</h4>
 </template>
 
 <script>
-export default {};
+export default {
+  props: ["data"],
+};
 </script>
 
 <style></style>

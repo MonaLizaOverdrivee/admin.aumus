@@ -104,8 +104,6 @@ export default {
         );
         console.log(data);
         commit("SET_EDITABLE_PAGE", data);
-        commit("loading/TOGGLE_LOADING_BUTTON", false, { root: true });
-
         commit(
           "notification/SET_NOTIFY",
           {
@@ -116,7 +114,7 @@ export default {
           { root: true }
         );
       } catch ({ response }) {
-        commit("loading/TOGGLE_LOADING_BUTTON", false, { root: true });
+
         commit(
           "notification/SET_NOTIFY",
           {
@@ -126,6 +124,8 @@ export default {
           },
           { root: true }
         );
+      } finally {
+        commit("loading/TOGGLE_LOADING_BUTTON", false, { root: true });
       }
     },
     async saveNewPage({ state, commit }) {
@@ -133,7 +133,6 @@ export default {
         commit("loading/TOGGLE_LOADING_BUTTON", true, { root: true });
         const { data } = await api.pages.createPage(state.editablePage);
         commit("SET_EDITABLE_PAGE", data);
-        commit("loading/TOGGLE_LOADING_BUTTON", false, { root: true });
         commit(
           "notification/SET_NOTIFY",
           {
@@ -144,7 +143,6 @@ export default {
           { root: true }
         );
       } catch ({ response }) {
-        commit("loading/TOGGLE_LOADING_BUTTON", false, { root: true });
         commit(
           "notification/SET_NOTIFY",
           {
@@ -154,6 +152,8 @@ export default {
           },
           { root: true }
         );
+      } finally {
+        commit("loading/TOGGLE_LOADING_BUTTON", false, { root: true });
       }
     },
   },
