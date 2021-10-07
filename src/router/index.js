@@ -37,20 +37,18 @@ const routes = [
   {
     path: "/pages/:id",
     name: "PagesId",
-    component: () =>
-      import(/* webpackChunkName: "pagesId" */ "../views/PageEditor"),
-      meta: {
-        layout: "admin",
-      },
+    component: () => import(/* webpackChunkName: "pagesId" */ "../views/PageEditor"),
+    meta: {
+      layout: "admin",
+    },
   },
   {
     path: "/pages/new",
     name: "PagesNew",
-    component: () =>
-      import(/* webpackChunkName: "pagesNew" */ "../views/PageEditor"),
-      meta: {
-        layout: "admin",
-      },
+    component: () => import(/* webpackChunkName: "pagesNew" */ "../views/PageEditor"),
+    meta: {
+      layout: "admin",
+    },
   },
   {
     path: "/news",
@@ -100,14 +98,13 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  const checkPageData =
-    Object.keys(store.getters["pages/editablePage"]).length === 0 &&
-    to.name === "PagesId";
+  const checkelements =
+    Object.keys(store.getters["pages/editablePage"]).length === 0 && to.name === "PagesId";
 
   const token = localStorage.getItem("token");
   const auth = !token && to.path !== "/auth";
 
-  if (checkPageData) {
+  if (checkelements) {
     next("/pages");
   } else if (auth) {
     next("/auth");

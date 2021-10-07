@@ -1,7 +1,7 @@
 <template>
   <EditorHeader
-    v-model:title="dataPage.Title"
-    v-model:URL="dataPage.URL"
+    v-model:title="currentPage.Title"
+    v-model:URL="currentPage.URL"
     @save="savePage"
     @exit="$router.push('/pages')"
   />
@@ -54,12 +54,12 @@
   <br> -->
   <div class="p-d-flex p-flex-column">
     <ElementViewWrapper
-      v-for="(itm, i) in dataPage.PageData"
+      v-for="(itm, i) in currentPage.elements"
       :key="itm"
       :index="i"
       :role="role"
       :visible="itm.visible"
-      :qntElements="dataPage.PageData.length - 1"
+      :qntElements="currentPage.elements.length - 1"
       :bg="itm.bg"
       @up="upElement(i, i - 1)"
       @down="downElement(i, i + 1)"
@@ -71,8 +71,11 @@
       <component :is="itm.type + '-view_' + itm.style" :data="itm.data" />
     </ElementViewWrapper>
   </div>
-  <AppAddButton @click="addElementManagerOpen" v-if="$ability.can('create', role)" />
-  <pre>{{ dataPage }}</pre>
+  <AppAddButton
+    @click="addElementManagerOpen"
+    v-if="$ability.can('create', role)"
+  />
+  <pre>{{ currentPage }}</pre>
   <Dialog
     header="Менеджер элементов"
     :closable="false"
@@ -101,7 +104,12 @@
       </div>
     </div>
     <template #footer>
-      <Button label="Отмена" icon="pi pi-times" @click="close" class="p-button-text" />
+      <Button
+        label="Отмена"
+        icon="pi pi-times"
+        @click="close"
+        class="p-button-text"
+      />
       <Button label="Выбрать" icon="pi pi-check" @click="addElementToPage" />
     </template>
   </Dialog>
@@ -146,7 +154,7 @@ export default {
         : "admin"
     );
     const confirm = useConfirm();
-    const dataPage = reactive(store.getters["pages/editablePage"]);
+    const currentPage = reactive(store.getters["pages/editablePage"]);
     const display = ref(false);
     const componentContent = ref(null);
     const bgElement = ref("ffffff");
@@ -174,11 +182,14 @@ export default {
       router
         .replace({
           query: {
-            type: dataPage.PageData[i].type,
-            style: dataPage.PageData[i].style,
+            type: currentPage.elements[i].type,
+            style: currentPage.elements[i].style,
           },
         })
-        .then(() => (componentContent.value.dataElement = dataPage.PageData[i].data));
+        .then(
+          () =>
+            (componentContent.value.dataElement = currentPage.elements[i].data)
+        );
     }
     function betweenElementManagerOpen(i) {
       display.value = true;
@@ -228,7 +239,8 @@ export default {
           label: subitm.label,
           to: `?type=${itm.type}&style=${index + 1}`,
           style: computed(() =>
-            route.query.type === itm.type && route.query.style === `${index + 1}`
+            route.query.type === itm.type &&
+            route.query.style === `${index + 1}`
               ? "background-color: var(--surface-c)"
               : ""
           ),
@@ -243,10 +255,18 @@ export default {
     }
     //WrapperElement
     function upElement(old_index, new_index) {
-      dataPage.PageData.splice(new_index, 0, dataPage.PageData.splice(old_index, 1)[0]);
+      currentPage.elements.splice(
+        new_index,
+        0,
+        currentPage.elements.splice(old_index, 1)[0]
+      );
     }
     function downElement(old_index, new_index) {
-      dataPage.PageData.splice(new_index, 0, dataPage.PageData.splice(old_index, 1)[0]);
+      currentPage.elements.splice(
+        new_index,
+        0,
+        currentPage.elements.splice(old_index, 1)[0]
+      );
     }
     function deleteElement(i) {
       confirm.require({
@@ -278,7 +298,7 @@ export default {
       } else next();
     });
     return {
-      dataPage,
+      currentPage,
       addElementManagerOpen,
       display,
       close,

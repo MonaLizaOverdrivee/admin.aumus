@@ -37,7 +37,7 @@ export default {
     function createPage() {
       store.commit("pages/SET_EDITABLE_PAGE", {
         Title: "",
-        PageData: [],
+        elements: [],
         URL: "",
       });
       router.push("/pages/new");
