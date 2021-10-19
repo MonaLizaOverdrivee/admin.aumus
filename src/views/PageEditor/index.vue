@@ -61,8 +61,8 @@
       :visible="itm.visible"
       :qntElements="currentPage.elements.length - 1"
       :bg="itm.bg"
-      @up="upElement(i, i - 1)"
-      @down="downElement(i, i + 1)"
+      @up="changeOrderElements(i, i - 1)"
+      @down="changeOrderElements(i, i + 1)"
       @delete="deleteElement(i)"
       @hidden="hiddenElement(i)"
       @openElementManager="editElementManagerOpen(i)"
@@ -71,10 +71,7 @@
       <component :is="itm.type + '-view_' + itm.style" :data="itm.data" />
     </ElementViewWrapper>
   </div>
-  <AppAddButton
-    @click="addElementManagerOpen"
-    v-if="$ability.can('create', role)"
-  />
+  <AppAddButton @click="addElementManagerOpen" v-if="$ability.can('create', role)" />
   <pre>{{ currentPage }}</pre>
   <Dialog
     header="Менеджер элементов"
@@ -94,22 +91,13 @@
             <strong>Цвета блока: </strong><ColorPicker v-model="bgElement" />
           </component>
         </keep-alive>
-        <div
-          class="p-d-flex p-jc-center p-ai-center"
-          style="height: 100%; color: gray"
-          v-else
-        >
+        <div class="p-d-flex p-jc-center p-ai-center" style="height: 100%; color: gray" v-else>
           <h1>Выбирете элемент из списка</h1>
         </div>
       </div>
     </div>
     <template #footer>
-      <Button
-        label="Отмена"
-        icon="pi pi-times"
-        @click="close"
-        class="p-button-text"
-      />
+      <Button label="Отмена" icon="pi pi-times" @click="close" class="p-button-text" />
       <Button label="Выбрать" icon="pi pi-check" @click="addElementToPage" />
     </template>
   </Dialog>
@@ -186,10 +174,7 @@ export default {
             style: currentPage.elements[i].style,
           },
         })
-        .then(
-          () =>
-            (componentContent.value.dataElement = currentPage.elements[i].data)
-        );
+        .then(() => (componentContent.value.dataElement = currentPage.elements[i].data));
     }
     function betweenElementManagerOpen(i) {
       display.value = true;
@@ -200,9 +185,7 @@ export default {
     onMounted(() => {
       menu.value = getMenuItem();
     });
-    const nameComponentContent = computed(
-      () => route.query.type + "-content_" + route.query.style
-    );
+    const nameComponentContent = computed(() => route.query.type + "-content_" + route.query.style);
     function close() {
       display.value = false;
       editIndex.value = null;
@@ -217,19 +200,24 @@ export default {
         visible: true,
         bg: "#" + bgElement.value,
       };
-      if (modeMangerElement.value === "new") {
-        store.commit("pages/SET_PAGE_DATA_ELEMENT", element);
-      } else if (modeMangerElement.value === "edit") {
-        store.commit("pages/SET_PAGE_DATA_EDIT_ELEMENT", {
-          element,
-          i: editIndex.value,
-        });
-      } else {
-        store.commit("pages/SET_PAGE_DATA_ELEMENT_BETWEEN", {
-          data: element,
-          i: editIndex.value,
-        });
-      }
+      const action = {
+        new: () => {
+          store.commit("pages/SET_PAGE_DATA_ELEMENT", element);
+        },
+        edit: () => {
+          store.commit("pages/SET_PAGE_DATA_EDIT_ELEMENT", {
+            element,
+            index: editIndex.value,
+          });
+        },
+        between: () => {
+          store.commit("pages/SET_PAGE_DATA_ELEMENT_BETWEEN", {
+            element,
+            index: editIndex.value,
+          });
+        },
+      };
+      action[modeMangerElement.value]();
       bgElement.value = "ffffff";
       close();
     }
@@ -239,8 +227,7 @@ export default {
           label: subitm.label,
           to: `?type=${itm.type}&style=${index + 1}`,
           style: computed(() =>
-            route.query.type === itm.type &&
-            route.query.style === `${index + 1}`
+            route.query.type === itm.type && route.query.style === `${index + 1}`
               ? "background-color: var(--surface-c)"
               : ""
           ),
@@ -254,19 +241,8 @@ export default {
       return menuParse;
     }
     //WrapperElement
-    function upElement(old_index, new_index) {
-      currentPage.elements.splice(
-        new_index,
-        0,
-        currentPage.elements.splice(old_index, 1)[0]
-      );
-    }
-    function downElement(old_index, new_index) {
-      currentPage.elements.splice(
-        new_index,
-        0,
-        currentPage.elements.splice(old_index, 1)[0]
-      );
+    function changeOrderElements(old_index, new_index) {
+      store.commit("pages/CHANGE_ORDER_ELEMENT", { old_index, new_index });
     }
     function deleteElement(i) {
       confirm.require({
@@ -308,8 +284,7 @@ export default {
       menu,
       nameComponentContent,
       bgElement,
-      upElement,
-      downElement,
+      changeOrderElements,
       editElementManagerOpen,
       betweenElementManagerOpen,
       modeMangerElement,

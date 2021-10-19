@@ -30,8 +30,8 @@ export default {
     SET_PAGE_DATA_ELEMENT(state, element) {
       state.editablePage.elements.push(element);
     },
-    SET_PAGE_DATA_ELEMENT_BETWEEN(state, element) {
-      state.editablePage.elements.splice(element.i, 0, element.data);
+    SET_PAGE_DATA_ELEMENT_BETWEEN(state, { index, element }) {
+      state.editablePage.elements.splice(index, 0, element);
     },
     DELETE_ELEMENT(state, index) {
       state.editablePage.elements.splice(index, 1);
@@ -40,12 +40,15 @@ export default {
       state.editablePage = page;
       state.startEditablePage = cloneDeep(page);
     },
-    SET_PAGE_DATA_EDIT_ELEMENT(state, payload) {
-      state.editablePage.elements[payload.i] = payload.element;
+    SET_PAGE_DATA_EDIT_ELEMENT(state, { index, element }) {
+      state.editablePage.elements[index] = element;
     },
     CHANGE_VISIBLE_ELEMENT(state, index) {
       state.editablePage.elements[index].visible = !state.editablePage.elements[index].visible;
     },
+    CHANGE_ORDER_ELEMENT(state, { old_index, new_index }) {
+      state.editablePage.elements.splice(new_index, 0, state.editablePage.elements.splice(old_index, 1)[0])
+    }
   },
   actions: {
     async loadPagesCount({ commit }) {
