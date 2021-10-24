@@ -27,10 +27,7 @@ export default {
     SET_PAGES_LIST(state, pages) {
       state.pages = pages;
     },
-    SET_PAGE_DATA_ELEMENT(state, element) {
-      state.editablePage.elements.push(element);
-    },
-    SET_PAGE_DATA_ELEMENT_BETWEEN(state, { index, element }) {
+    SET_PAGE_DATA_ELEMENT(state, { index, element }) {
       state.editablePage.elements.splice(index, 0, element);
     },
     DELETE_ELEMENT(state, index) {

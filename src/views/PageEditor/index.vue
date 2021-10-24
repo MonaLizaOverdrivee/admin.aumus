@@ -66,12 +66,12 @@
       @delete="deleteElement(i)"
       @hidden="hiddenElement(i)"
       @openElementManager="editElementManagerOpen(i)"
-      @openElementManagerBetween="betweenElementManagerOpen(i)"
+      @openElementManagerBetween="addElementManagerOpen(i)"
     >
       <component :is="itm.type + '-view_' + itm.style" :data="itm.data" />
     </ElementViewWrapper>
   </div>
-  <AppAddButton @click="addElementManagerOpen" v-if="$ability.can('create', role)" />
+  <AppAddButton @click="addElementManagerOpen(currentPage.elements.length)" v-if="$ability.can('create', role)" />
   <pre>{{ currentPage }}</pre>
   <Dialog
     header="Менеджер элементов"
@@ -104,6 +104,7 @@
 </template>
 
 <script>
+import { Element } from "./use";
 import AppAddButton from "@/components/UI/AppAddButton";
 import ColorPicker from "primevue/colorpicker";
 import PanelMenu from "primevue/panelmenu";
@@ -136,12 +137,12 @@ export default {
     const router = useRouter();
     const route = useRoute();
     const store = useStore();
+    const confirm = useConfirm();
     const role = computed(() =>
       store.getters["auth/role"] === "manager"
         ? store.getters["auth/userAccess"].pages[route.params.id].role
         : "admin"
     );
-    const confirm = useConfirm();
     const currentPage = reactive(store.getters["pages/editablePage"]);
     const display = ref(false);
     const componentContent = ref(null);
@@ -149,6 +150,7 @@ export default {
     const menu = ref([]);
     const editIndex = ref(null);
     const modeMangerElement = ref("");
+    const nameComponentContent = computed(() => route.query.type + "-content_" + route.query.style);
 
     //editHeader
     async function savePage() {
@@ -159,9 +161,10 @@ export default {
       }
     }
     //ElementManager
-    function addElementManagerOpen() {
+    function addElementManagerOpen(i) {
       modeMangerElement.value = "new";
       display.value = true;
+      editIndex.value = i;
     }
     function editElementManagerOpen(i) {
       display.value = true;
@@ -176,49 +179,22 @@ export default {
         })
         .then(() => (componentContent.value.dataElement = currentPage.elements[i].data));
     }
-    function betweenElementManagerOpen(i) {
-      display.value = true;
-      modeMangerElement.value = "between";
-      editIndex.value = i;
-    }
     //####################################################
     onMounted(() => {
       menu.value = getMenuItem();
     });
-    const nameComponentContent = computed(() => route.query.type + "-content_" + route.query.style);
     function close() {
       display.value = false;
       editIndex.value = null;
       modeMangerElement.value = "";
       router.push({ query: {} });
+      bgElement.value = "ffffff";
     }
     function addElementToPage() {
-      const element = {
-        type: route.query.type,
-        style: route.query.style,
-        data: componentContent.value.getElementData(),
-        visible: true,
-        bg: "#" + bgElement.value,
-      };
-      const action = {
-        new: () => {
-          store.commit("pages/SET_PAGE_DATA_ELEMENT", element);
-        },
-        edit: () => {
-          store.commit("pages/SET_PAGE_DATA_EDIT_ELEMENT", {
-            element,
-            index: editIndex.value,
-          });
-        },
-        between: () => {
-          store.commit("pages/SET_PAGE_DATA_ELEMENT_BETWEEN", {
-            element,
-            index: editIndex.value,
-          });
-        },
-      };
-      action[modeMangerElement.value]();
-      bgElement.value = "ffffff";
+      new Element(route.query)
+        .addData(componentContent.value.getElementData(), editIndex.value)
+        .addBg(bgElement.value)
+        .addOnpage(modeMangerElement.value, store.commit);
       close();
     }
     function getMenuItem() {
@@ -286,7 +262,6 @@ export default {
       bgElement,
       changeOrderElements,
       editElementManagerOpen,
-      betweenElementManagerOpen,
       modeMangerElement,
       deleteElement,
       hiddenElement,
