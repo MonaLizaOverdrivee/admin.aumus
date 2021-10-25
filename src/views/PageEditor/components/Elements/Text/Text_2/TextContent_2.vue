@@ -5,19 +5,21 @@
       {{ $route.query.type }}
     </TabPanel>
     <TabPanel header="Контент">
-      <Editor v-model="value" editorStyle="height: 300px" />
+      <FileUpload mode="basic" name="demo[]" url="http://localhost:1337/upload" accept="image/*" :maxFileSize="1000000" chooseLabel="Выбрать картинку"/>
+      <Editor v-model="value" editorStyle="height: 300px" class="p-mt-2"/>
     </TabPanel>
   </TabView>
 </template>
 
 <script>
 import TabView from "primevue/tabview";
+import FileUpload from 'primevue/fileupload';
 import TabPanel from "primevue/tabpanel";
 import Editor from "primevue/editor";
 import { ref, watch } from "vue";
 import { useStore } from "vuex";
 export default {
-  components: { TabView, TabPanel, Editor },
+  components: { TabView, TabPanel, Editor, FileUpload },
   emits: ["data-component"],
   setup() {
     const store = useStore();
