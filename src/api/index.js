@@ -2,6 +2,7 @@ import axios from "axios";
 import pages from "./pages";
 import auth from "./auth";
 import users from "./users";
+import upload from "./upload";
 
 const baseAxios = axios.create({
   baseURL: process.env.VUE_APP_BACKEND_URL,
@@ -15,6 +16,8 @@ export default {
   pages: pages(baseAxios),
   auth: auth(baseAxios),
   users: users(baseAxios),
+  upload: upload(baseAxios),
+
 };
 
 baseAxios.interceptors.request.use(function(config) {
