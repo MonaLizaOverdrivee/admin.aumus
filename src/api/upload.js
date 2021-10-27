@@ -1,8 +1,7 @@
 export default (axios) => ({
   uploadFile(file) {
-
-    let data = new FormData()
-    data.append('image[]', file, file.name)
+    const data = new FormData()
+    data.append('files', file, 'news.jpg')
     return axios.post("upload", data)
   }
 })

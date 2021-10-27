@@ -5,7 +5,7 @@
       {{ $route.query.type }}
     </TabPanel>
     <TabPanel header="Контент">
-      <FileUpload mode="basic" :customUpload="true" :maxFileSize="1000000" chooseLabel="Выбрать картинку" @uploader="load"/>
+      <FileUpload mode="basic" :customUpload="true" accept="image/*" :maxFileSize="1000000" :auto="true" chooseLabel="Выбрать картинку" @uploader="load"/>
       <Editor v-model="value" editorStyle="height: 300px" class="p-mt-2"/>
     </TabPanel>
   </TabView>
@@ -31,9 +31,10 @@ export default {
     function htmlParce(str) {
       return str.slice(3, str.length - 4);
     }
-    function load(e){
+   async function load(e){
       console.log(e.files)
-      api.upload.uploadFile(e.files[0])
+      const { data } = await api.upload.uploadFile(e.files[0])
+      console.log(data)
     }
     return {
       value,
